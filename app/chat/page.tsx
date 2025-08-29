@@ -14,6 +14,7 @@ import {
   Send,
   Plus,
   MessageSquare,
+  FileText,
   ArrowLeftToLine,
   ArrowRightToLine,
   UserRound,
@@ -1126,6 +1127,25 @@ export default function ChatPage() {
 
             <div>
               <h1 className="text-xl font-semibold">{activeRole}</h1>
+            </div>
+
+            <div className="ml-auto">
+              <button
+                onClick={() => {
+                  if (!currentSessionId || !user?.id) return;
+                  // Navigate to Report page with params
+                  const url = `/Report?sessionId=${encodeURIComponent(
+                    currentSessionId
+                  )}&userId=${encodeURIComponent(user.id)}`;
+                  router.push(url);
+                }}
+                disabled={!currentSessionId || !user?.id}
+                className="group relative p-2 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 
+                  hover:bg-white/20 hover:border-white/30 transition-all duration-300
+                  shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Generate Report">
+                <FileText className="w-5 h-5 text-white/80 group-hover:text-white" />
+              </button>
             </div>
           </div>
         </div>

@@ -234,3 +234,186 @@ export async function callGeminiAPIForTitle(userMsg: string) {
 
   return title;
 }
+/**
+ * Report-specific helpers (Gemini)
+ */
+export type GeminiReportMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+function mapRole(role: "user" | "assistant"): "user" | "model" {
+  return role === "assistant" ? "model" : "user";
+}
+
+export function buildReportSystemMessageForGemini(
+  baseInstruction: string,
+  partialReport?: string
+): string {
+  const incremental = partialReport
+    ? `You are receiving the report incrementally. Merge new insights into the existing partial report without duplicating sections. Preserve structure and tags strictly.`
+    : `Generate the complete report strictly following the provided structure and tags.`;
+  return `${baseInstruction}\n\n${incremental}\n\nRules:\n- Only output the report body.\n- Preserve tags, headings, and JSON keys exactly.\n- No prose outside the report.\n- If information is missing, leave placeholders clearly marked TODO.`;
+}
+
+export async function callGeminiForReport(
+  apiKey: string,
+  systemInstruction: string,
+  payloadMessages: GeminiReportMessage[],
+  partialReport?: string,
+  chunkIndex?: number
+): Promise<string> {
+  const contents = [
+    ...(partialReport
+      ? [
+          {
+            role: "user" as const,
+            parts: [{ text: `Current partial report draft:\n${partialReport}` }],
+          },
+        ]
+      : []),
+    ...payloadMessages.map((m) => ({
+      role: mapRole(m.role),
+      parts: [{ text: m.content }],
+    })),
+  ];
+
+  const requestBody = {
+    system_instruction: {
+      parts: [{ text: systemInstruction }],
+    },
+    contents,
+    generationConfig: GENERATION_CONFIG.gemini,
+  } as const;
+
+  logger.info("📤 [GEMINI] REPORT REQUEST", {
+    systemLen: systemInstruction.length,
+    payloadCount: payloadMessages.length,
+    hasPartial: !!partialReport,
+    chunkIndex,
+  });
+
+  const response = await fetch(`${API_ENDPOINTS.gemini}?key=${apiKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(requestBody),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    logger.error("❌ [GEMINI] REPORT ERROR", {
+      status: response.status,
+      text,
+      chunkIndex,
+    });
+    throw new Error(`Gemini error ${response.status} (chunk ${chunkIndex}): ${text}`);
+  }
+
+  const data = await response.json();
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+
+  const textFromParts = parts
+    .map((p) => (typeof p?.text === "string" ? p.text : ""))
+    .filter((t) => t && t.trim().length > 0)
+    .join("\n")
+    .trim();
+
+  if (textFromParts) return textFromParts;
+
+  const inlineFromParts = parts
+    .map((p) =>
+      typeof p?.inline_data?.data === "string" ? p.inline_data.data : ""
+    )
+    .filter((t) => t && t.trim().length > 0)
+    .join("\n")
+    .trim();
+
+  if (inlineFromParts) return inlineFromParts;
+
+  const feedback =
+    data?.promptFeedback?.blockReason || data?.promptFeedback?.safetyRatings;
+  if (feedback) {
+    throw new Error(
+      `Gemini returned no content (chunk ${chunkIndex}, feedback: ${JSON.stringify(
+        feedback
+      )})`
+    );
+  }
+
+  throw new Error(`Gemini returned empty content (chunk ${chunkIndex})`);
+}
+
+export function chunkGeminiMessages(
+  items: GeminiReportMessage[],
+  parts: number
+): GeminiReportMessage[][] {
+  if (parts <= 1) return [items];
+  const size = Math.ceil(items.length / parts);
+  const chunks: GeminiReportMessage[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+  return chunks;
+}
+
+export async function generateReportWithChunkingGemini(params: {
+  apiKey: string;
+  baseInstruction: string;
+  fullMessages: GeminiReportMessage[];
+  thresholdCount?: number;
+  thresholdChars?: number;
+  maxParts?: number;
+}): Promise<string> {
+  const thresholdCount = params.thresholdCount ?? 60;
+  const thresholdChars = params.thresholdChars ?? 8000; // new char threshold
+  const maxParts = params.maxParts ?? 4;
+
+  const normalized: GeminiReportMessage[] = (params.fullMessages || [])
+    .filter((m) => typeof m?.content === "string" && m.content.trim().length)
+    .map((m) => ({ role: m.role, content: m.content.trim() }));
+
+  const totalChars = normalized.reduce(
+    (sum, m) => sum + m.content.length,
+    0
+  );
+
+  let partialReport: string | undefined = undefined;
+
+  if (normalized.length > thresholdCount || totalChars > thresholdChars) {
+    const parts = Math.min(
+      maxParts,
+      normalized.length > thresholdCount * 3 || totalChars > thresholdChars * 3
+        ? 4
+        : normalized.length > thresholdCount * 2 || totalChars > thresholdChars * 2
+        ? 3
+        : 2
+    );
+
+    const chunks = chunkGeminiMessages(normalized, parts);
+    for (let i = 0; i < chunks.length; i++) {
+      const systemInstruction = buildReportSystemMessageForGemini(
+        params.baseInstruction,
+        partialReport
+      );
+      const result = await callGeminiForReport(
+        params.apiKey,
+        systemInstruction,
+        chunks[i],
+        partialReport,
+        i + 1
+      );
+      partialReport = result;
+    }
+    return partialReport || "";
+  } else {
+    const systemInstruction = buildReportSystemMessageForGemini(
+      params.baseInstruction
+    );
+    return await callGeminiForReport(
+      params.apiKey,
+      systemInstruction,
+      normalized,
+      undefined,
+      1
+    );
+  }
+}

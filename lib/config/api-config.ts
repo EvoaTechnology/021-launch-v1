@@ -12,10 +12,13 @@ export function getAvailableAPIKeys() {
 
   const groqkey = process.env.GROQ_API_KEY;
 
+  const openAIKey = process.env.OPENAI_API_KEY;
+
   return {
     gemini: geminiKey,
     xai: xaiKey,
     groq: groqkey,
+    openai: openAIKey,
   };
 }
 
@@ -27,6 +30,7 @@ export const API_ENDPOINTS = {
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
   xai: "https://api.x.ai/v1/chat/completions",
   groq: "https://api.groq.com/openai/v1/chat/completions",
+  openai: "https://api.openai.com/v1/chat/completions",
 } as const;
 
 /**
@@ -44,4 +48,8 @@ export const GENERATION_CONFIG = {
     max_tokens: 1024,
   },
   groq: {},
+  openai: {
+    temperature: 0.3,
+    max_tokens: 1500,
+  },
 } as const;
