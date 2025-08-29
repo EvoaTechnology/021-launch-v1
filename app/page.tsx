@@ -203,7 +203,7 @@ const LandingPage: React.FC = () => {
             Pricing
           </a>
           <a
-            href="#"
+            href="https://chat.whatsapp.com/HJ5lwuCnAdGDdkQq4pbsnf?mode=ems_copy_c"
             className="text-gray-300 hover:text-white transition-colors">
             Community
           </a>
@@ -228,12 +228,12 @@ const LandingPage: React.FC = () => {
         {/* Desktop auth buttons */}
         {isAuthenticated ? (
           <div className="flex items-center gap-4">
-            <Link
+            {/* <Link
               href="/chat"
               className="inline-block px-2 py-1 rounded-lg border border-gray-500 text-white hover:bg-gray-700 transition-all duration-300 ease-in-out hover:scale-105 cursor-pointer"
             >
               Chat
-            </Link>
+            </Link> */}
             {/* User Icon as button */}
             <User
               onClick={() => setOpen(!open)}
@@ -508,10 +508,7 @@ const LandingPage: React.FC = () => {
       {/* Compact Footer */}
       <footer className="relative z-10 bg-gray-900/60 backdrop-blur-sm border-t border-gray-800/50 py-3 text-center text-xs text-gray-500">
   <div className="max-w-6xl mx-auto px-4">
-    <p className="mb-1">
-      © {new Date().getFullYear()} Evoa / 021 AI. All rights reserved.
-    </p>
-    <div className="flex justify-center gap-4 text-gray-400">
+    <div className="flex justify-center text-xl gap-4 text-gray-400">
       <Link
         href="/contact"
         className="hover:text-white transition-colors duration-200">
@@ -519,10 +516,10 @@ const LandingPage: React.FC = () => {
       </Link>
     </div>
     {/* Social Icons BELOW the links row */}
-    <div className="flex justify-center gap-4 mt-2">
+    <div className="flex items-center justify-center gap-4 mt-2">
       {/* WhatsApp */}
       <a
-        href="https://wa.me/8865067841"
+        href="https://chat.whatsapp.com/HJ5lwuCnAdGDdkQq4pbsnf?mode=ems_copy_c"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"
@@ -535,11 +532,11 @@ const LandingPage: React.FC = () => {
 
       {/* Gmail */}
       <a
-        href="mailto:connectevoa@gmail.com"
+        href="https://mail.google.com/mail/?view=cm&fs=1&to=connectevoa@gmail.com"
         aria-label="Gmail"
         className="text-gray-400 hover:text-white transition-colors duration-200"
       >
-        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
           <path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/>
         </svg>
       </a>
@@ -570,6 +567,9 @@ const LandingPage: React.FC = () => {
         </svg>
       </a>
     </div>
+    <p className="m-2">
+      © {new Date().getFullYear()} Evoa / 021 AI. All rights reserved.
+    </p>
   </div>
 </footer>
     </div>
