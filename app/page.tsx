@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useAnimation } from "framer-motion";
 import { useAuthStore } from "./store/authStore";
-import { User } from "lucide-react";
+import { User,LogOut } from "lucide-react";
 
 const LandingPage: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
@@ -227,31 +227,31 @@ const LandingPage: React.FC = () => {
 
         {/* Desktop auth buttons */}
         {isAuthenticated ? (
-          <div className="flex items-center gap-4">
-            {/* <Link
-              href="/chat"
-              className="inline-block px-2 py-1 rounded-lg border border-gray-500 text-white hover:bg-gray-700 transition-all duration-300 ease-in-out hover:scale-105 cursor-pointer"
-            >
-              Chat
-            </Link> */}
-            {/* User Icon as button */}
-            <User
-              onClick={() => setOpen(!open)}
-              className="h-8 w-8 cursor-pointer text-gray-100 border border-gray-100 rounded-xl p-1 hover:bg-gray-200 hover:text-gray-900 transition"
-            />
+          <div className="relative">
+  {/* User Icon Button */}
+  <button
+    onClick={() => setOpen(!open)}
+    className="flex items-center justify-center h-10 w-10 rounded-full 
+               border border-gray-200 bg-gray-800 text-gray-100 
+               hover:bg-gray-700 hover:shadow-md hover:border-gray-400 
+               transition-all duration-200 ease-in-out"
+  >
+    <User className="h-5 w-5" />
+  </button>
 
-            {/* Dropdown */}
-            {open && (
-              <div className="absolute right-6 top-14 mt-2 w-22 bg-gray-800 text-gray-200 rounded-lg shadow-lg z-50">
-                <button
-                  onClick={signOut}
-                  className="text-left px-4 py-2 transition cursor-pointer"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
+  {/* Dropdown */}
+  {open && (
+    <div className="absolute right-0 mt-2 w-28 text-center bg-gray-900 text-gray-100 
+                    rounded-xl shadow-lg overflow-hidden border border-gray-700 z-50">
+      <button
+        onClick={signOut}
+        className="w-full flex items-center justify-between text-left px-4 py-2 hover:bg-gray-700 transition-colors cursor-pointer"
+      >
+       <LogOut className="h-4 w-4 text-red-400" /><span>Logout</span>
+      </button>
+    </div>
+  )}
+</div>
         ) : (
           <div className="hidden md:flex items-center space-x-4">
             <Link href="/login">

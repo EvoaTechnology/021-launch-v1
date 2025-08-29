@@ -103,9 +103,7 @@ export default function ChatPage() {
   const [clickedAdvisors, setClickedAdvisors] = useState<Set<string>>(
     new Set()
   );
-
-  // Advisor color mapping
-  const advisorColors = {
+const advisorColors: Record<string, string> = {
     ceo: "blue",
     cfo: "green",
     cto: "purple",
@@ -114,14 +112,83 @@ export default function ChatPage() {
 
   // Function to get advisor color from role name
   const getAdvisorColor = (roleName: string): string => {
-    const roleToAdvisorMap: { [key: string]: string } = {
-      CEO: "blue",
-      CFO: "green",
-      CTO: "purple",
-      CMO: "pink",
-    };
-    return roleToAdvisorMap[roleName] || "gray";
+    return advisorColors[roleName.toLowerCase()] || "gray";
   };
+
+  // Function to get hex color for advisor
+  const getAdvisorHexColor = (roleName: string): string => {
+    const colorMap: Record<string, string> = {
+      blue: "#3b82f6",
+      green: "#22c55e", 
+      purple: "#8b5cf6",
+      pink: "#ec4899",
+      gray: "#6b7280"
+    };
+    const colorKey = getAdvisorColor(roleName);
+    return colorMap[colorKey] || colorMap.gray;
+  };
+
+  // Function to get theme colors based on active advisor
+  const getThemeColors = () => {
+    if (!activeAdvisor) {
+      // Default theme when no advisor is selected
+      return {
+        primary: "#6b7280", // gray
+        primaryLight: "#9ca3af",
+        primaryDark: "#374151",
+        primaryBg: "rgba(107, 114, 128, 0.1)",
+        primaryBorder: "rgba(107, 114, 128, 0.3)",
+        primaryHover: "rgba(107, 114, 128, 0.2)"
+      };
+    }
+
+    const colorMap: Record<string, {
+      primary: string;
+      primaryLight: string;
+      primaryDark: string;
+      primaryBg: string;
+      primaryBorder: string;
+      primaryHover: string;
+    }> = {
+      ceo: {
+        primary: "#3b82f6", // blue
+        primaryLight: "#60a5fa",
+        primaryDark: "#1e40af",
+        primaryBg: "rgba(59, 130, 246, 0.1)",
+        primaryBorder: "rgba(59, 130, 246, 0.3)",
+        primaryHover: "rgba(59, 130, 246, 0.2)"
+      },
+      cfo: {
+        primary: "#22c55e", // green
+        primaryLight: "#4ade80",
+        primaryDark: "#15803d",
+        primaryBg: "rgba(34, 197, 94, 0.1)",
+        primaryBorder: "rgba(34, 197, 94, 0.3)",
+        primaryHover: "rgba(34, 197, 94, 0.2)"
+      },
+      cto: {
+        primary: "#8b5cf6", // purple
+        primaryLight: "#a78bfa",
+        primaryDark: "#7c3aed",
+        primaryBg: "rgba(139, 92, 246, 0.1)",
+        primaryBorder: "rgba(139, 92, 246, 0.3)",
+        primaryHover: "rgba(139, 92, 246, 0.2)"
+      },
+      cmo: {
+        primary: "#ec4899", // pink
+        primaryLight: "#f472b6",
+        primaryDark: "#be185d",
+        primaryBg: "rgba(236, 72, 153, 0.1)",
+        primaryBorder: "rgba(236, 72, 153, 0.3)",
+        primaryHover: "rgba(236, 72, 153, 0.2)"
+      }
+    };
+
+    return colorMap[activeAdvisor] || colorMap.ceo;
+  };
+
+  // Advisor color mapping
+  
 
   // Use auth store
   const { user, checkAuth } = useAuthStore();
@@ -909,7 +976,7 @@ export default function ChatPage() {
         </div>
 
         {/* 2. New Chat Button Container */}
-        <div className="flex justify-center p-4 flex-shrink-0">
+         <div className="flex justify-center p-4 flex-shrink-0">
           <button
             onClick={handleCreateNewChat}
             disabled={isLoading}
@@ -954,7 +1021,7 @@ export default function ChatPage() {
                     className={`group relative w-full text-left rounded-2xl transition-all duration-200 ease-out overflow-hidden
     ${
       currentSessionId === session._id
-        ? `bg-pink-800/12 backdrop-blur-xl border border-white/25 shadow-lg shadow-white/5
+        ? `bg-blue-900/60 backdrop-blur-xl border border-white/25 shadow-lg shadow-white/5
            before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-r 
            before:from-white/8 before:via-white/3 before:to-white/8 before:pointer-events-none
            after:absolute after:inset-px after:rounded-2xl after:bg-gradient-to-b 
@@ -1154,21 +1221,25 @@ export default function ChatPage() {
                   className={`flex ${
                     message.role === "user" ? "justify-end" : "justify-start"
                   }`}>
-                  <div
-                    className={`flex max-w-screen items-start gap-3 ${
-                      message.role === "user" ? "flex-row-reverse" : ""
-                    }`}>
+                                      <div
+                      className={`flex max-w-screen items-start gap-3 ${
+                        message.role === "user" ? "flex-row-reverse" : ""
+                      }`}>
                     <div
                       className={`rounded-2xl px-3 py-2 backdrop-blur-md ${
                         message.role === "user"
                           ? "bg-white/10 border border-white/10 max-w-xl"
                           : message.activeRole &&
                             message.activeRole !== "Idea Validator"
-                          ? `max-w-4xl border-l-4 border-${getAdvisorColor(
-                              message.activeRole
-                            )}-400`
+                          ? "max-w-4xl border-l-4"
                           : "max-w-4xl"
-                      } text-white break-words text-wrap bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60`}>
+                      } text-white break-words text-wrap bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60`}
+                      style={{
+                        borderLeftColor: message.activeRole && 
+                          message.activeRole !== "Idea Validator" 
+                          ? getAdvisorHexColor(message.activeRole)
+                          : undefined
+                      }}>
                       <div className="whitespace-pre-wrap text-sm/5">
                         <AIResponseRenderer content={message.content} />
                       </div>
