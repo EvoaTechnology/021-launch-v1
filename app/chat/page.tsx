@@ -103,7 +103,7 @@ export default function ChatPage() {
   const [clickedAdvisors, setClickedAdvisors] = useState<Set<string>>(
     new Set()
   );
-const advisorColors: Record<string, string> = {
+  const advisorColors: Record<string, string> = {
     ceo: "blue",
     cfo: "green",
     cto: "purple",
@@ -119,7 +119,7 @@ const advisorColors: Record<string, string> = {
   const getAdvisorHexColor = (roleName: string): string => {
     const colorMap: Record<string, string> = {
       blue: "#3b82f6",
-      green: "#22c55e", 
+      green: "#22c55e",
       purple: "#8b5cf6",
       pink: "#ec4899",
       gray: "#6b7280"
@@ -188,7 +188,7 @@ const advisorColors: Record<string, string> = {
   };
 
   // Advisor color mapping
-  
+
 
   // Use auth store
   const { user, checkAuth } = useAuthStore();
@@ -964,9 +964,8 @@ const advisorColors: Record<string, string> = {
     <div className="flex h-screen bg-radial-[at_25%_25%] from-[#010831] to-black to-75%  text-white ">
       {/* Sidebar */}
       <div
-        className={`${
-          sidebarOpen ? "w-60" : "w-0"
-        } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
+        className={`${sidebarOpen ? "w-60" : "w-0"
+          } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
         {/* 1. Header Container */}
         <div className="p-3 border-b border-white/20 flex items-center justify-between flex-shrink-0">
           <h2 className="text-lg font-semibold">021 AI</h2>
@@ -976,7 +975,7 @@ const advisorColors: Record<string, string> = {
         </div>
 
         {/* 2. New Chat Button Container */}
-         <div className="flex justify-center p-4 flex-shrink-0">
+        <div className="flex justify-center p-4 flex-shrink-0">
           <button
             onClick={handleCreateNewChat}
             disabled={isLoading}
@@ -1019,19 +1018,18 @@ const advisorColors: Record<string, string> = {
                     key={session._id}
                     onClick={() => handleSelectChatSession(session._id!)}
                     className={`group relative w-full text-left rounded-2xl transition-all duration-200 ease-out overflow-hidden
-    ${
-      currentSessionId === session._id
-        ? `bg-blue-900/60 backdrop-blur-xl border border-white/25 shadow-lg shadow-white/5
+    ${currentSessionId === session._id
+                        ? `bg-blue-900/60 backdrop-blur-xl border border-white/25 shadow-lg shadow-white/5
            before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-r 
            before:from-white/8 before:via-white/3 before:to-white/8 before:pointer-events-none
            after:absolute after:inset-px after:rounded-2xl after:bg-gradient-to-b 
            after:from-white/8 after:to-transparent after:pointer-events-none`
-        : `bg-white/4 backdrop-blur-md border border-white/8 
+                        : `bg-white/4 backdrop-blur-md border border-white/8 
            hover:bg-white/8 hover:border-white/15 hover:shadow-md hover:shadow-white/3
            hover:before:opacity-100 before:absolute before:inset-0 before:rounded-2xl 
            before:bg-gradient-to-r before:from-transparent before:via-white/3 before:to-transparent
            before:opacity-0 before:transition-opacity before:duration-200 before:pointer-events-none`
-    }`}
+                      }`}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
@@ -1048,16 +1046,16 @@ const advisorColors: Record<string, string> = {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div
-                            className={`font-medium text-xs transition-colors duration-200 truncate ${
-                              currentSessionId === session._id
+                            className={`font-medium text-xs transition-colors duration-200 truncate ${currentSessionId === session._id
                                 ? "text-white"
                                 : "text-white/80 group-hover:text-white/95"
-                            }`}>
+                              }`}>
                             {session.topic}
                           </div>
                         </div>
                         {currentSessionId === session._id && (
-                          <div className="flex-shrink-0 w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                          <div className="flex-shrink-0 w-1.5 h-1.5 bg-white/70 rounded-full duration-200 
+               group-hover:-translate-x-1.5"></div>
                         )}
 
                         <button
@@ -1067,7 +1065,7 @@ const advisorColors: Record<string, string> = {
                             handleDeleteChatSession(session._id!);
                           }}
                           disabled={deletingSessionId === session._id}
-                          className="p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="hidden group-hover:flex items-center justify-center p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                           aria-label="Delete chat session">
                           {deletingSessionId === session._id ? (
                             <div className="w-4 h-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin" />
@@ -1141,11 +1139,11 @@ const advisorColors: Record<string, string> = {
                 <p className="text-white text-xs font-medium leading-tight">
                   {user?.email
                     ? (() => {
-                        const namePart = user.email.split("@")[0];
-                        return namePart.length > 12
-                          ? namePart.slice(0, 12)
-                          : namePart;
-                      })()
+                      const namePart = user.email.split("@")[0];
+                      return namePart.length > 12
+                        ? namePart.slice(0, 12)
+                        : namePart;
+                    })()
                     : "Loading..."}
                 </p>
                 <p className="text-white/50 text-xs leading-tight">Free tier</p>
@@ -1205,8 +1203,8 @@ const advisorColors: Record<string, string> = {
                 {currentSessionId
                   ? "Loading messages..."
                   : chatSessions.length > 0
-                  ? "Loading your chat..."
-                  : "Creating your first chat..."}
+                    ? "Loading your chat..."
+                    : "Creating your first chat..."}
               </div>
             ) : displayMessages.length === 0 ? (
               <div className="text-center text-white/50 text-sm py-8">
@@ -1218,25 +1216,22 @@ const advisorColors: Record<string, string> = {
               displayMessages.map((message) => (
                 <div
                   key={message._id || Math.random().toString()}
-                  className={`flex ${
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  }`}>
-                                      <div
-                      className={`flex max-w-screen items-start gap-3 ${
-                        message.role === "user" ? "flex-row-reverse" : ""
+                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
+                    }`}>
+                  <div
+                    className={`flex max-w-screen items-start gap-3 ${message.role === "user" ? "flex-row-reverse" : ""
                       }`}>
                     <div
-                      className={`rounded-2xl px-3 py-2 backdrop-blur-md ${
-                        message.role === "user"
+                      className={`rounded-2xl px-3 py-2 backdrop-blur-md ${message.role === "user"
                           ? "bg-white/10 border border-white/10 max-w-xl"
                           : message.activeRole &&
                             message.activeRole !== "Idea Validator"
-                          ? "max-w-4xl border-l-4"
-                          : "max-w-4xl"
-                      } text-white break-words text-wrap bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60`}
+                            ? "max-w-4xl border-l-4"
+                            : "max-w-4xl"
+                        } text-white break-words text-wrap bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60`}
                       style={{
-                        borderLeftColor: message.activeRole && 
-                          message.activeRole !== "Idea Validator" 
+                        borderLeftColor: message.activeRole &&
+                          message.activeRole !== "Idea Validator"
                           ? getAdvisorHexColor(message.activeRole)
                           : undefined
                       }}>
@@ -1319,8 +1314,8 @@ const advisorColors: Record<string, string> = {
                       currentSessionId
                         ? "Type your message here..."
                         : chatSessions.length > 0
-                        ? "Loading your chat..."
-                        : "Creating your chat..."
+                          ? "Loading your chat..."
+                          : "Creating your chat..."
                     }
                     className="w-full min-h-[60px] max-h-32 resize-none bg-transparent px-4 py-3 pr-14 
                        text-white placeholder-white/60 focus:outline-none relative z-10
@@ -1375,9 +1370,8 @@ const advisorColors: Record<string, string> = {
 
       {/* C-SUITE ADVISOR */}
       <div
-        className={`${
-          sidebarOpen ? "w-60" : "w-0"
-        } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
+        className={`${sidebarOpen ? "w-60" : "w-0"
+          } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
         {/* 1. Header Container */}
         <div className="p-3 border-b border-white/20 flex items-center justify-between flex-shrink-0">
           <h2 className="text-lg font-semibold">C-SUITE ADVISORS</h2>
