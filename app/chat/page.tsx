@@ -6,7 +6,10 @@ import { useAuthStore } from "../store/authStore";
 import { useChatStore } from "../store/chatStore";
 // Removed ReportCard and ProgressBar from main chat
 import CSuiteAdvisorCard from "../../components/ui/c-suite-card";
-import CEOImage from "../../public/image.png";
+import CEOImage from "../../public/ceo-1.png";
+import CFOImage from "../../public/cfo-1.png";
+import CMOImage from "../../public/cmo-1.png";
+import CTOImage from "../../public/cto-1.png";
 // import { cRoles } from "../../roles/roles.types";
 // import type { CRole } from "../../roles/chat.types";
 import {
@@ -20,7 +23,7 @@ import {
   LogOut,
 } from "lucide-react";
 import Image from "next/image";
-import profile from "../../public/image.png";
+import profile from "../../public/ceo-1.png";
 import proBg from "../../public/proBg.png";
 import AIResponseRenderer from "../../components/ui/AIResponseRenderer";
 import { useToast } from "../../components/ui/Toast";
@@ -86,7 +89,8 @@ export default function ChatPage() {
   const { toast } = useToast();
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpenLeft, setSidebarOpenLeft] = useState(true);
+  const [sidebarOpenRight, setSidebarOpenRight] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [proUser] = useState(false);
   const [activeRole, setActiveRole] = useState("Idea Validator");
@@ -291,12 +295,17 @@ export default function ChatPage() {
   //   setSidebarOpen((prev) => !prev);
   // }, []);
 
-  const handleCloseSidebar = useCallback(() => {
-    setSidebarOpen(false);
+  const handleCloseSidebarleft= useCallback(() => {
+    setSidebarOpenLeft(false);
   }, []);
-
-  const handleOpenSidebar = useCallback(() => {
-    setSidebarOpen(true);
+  const handleOpenSidebarleft= useCallback(() => {
+    setSidebarOpenLeft(true);
+  }, []);
+  const handleCloseSidebarright = useCallback(() => {
+    setSidebarOpenRight(false);
+  }, []);
+  const handleOpenSidebarright = useCallback(() => {
+    setSidebarOpenRight(true);
   }, []);
 
   // const handleToggleAdvisorPanel = useCallback(() => {
@@ -964,12 +973,13 @@ export default function ChatPage() {
     <div className="flex h-screen bg-radial-[at_25%_25%] from-[#010831] to-black to-75%  text-white ">
       {/* Sidebar */}
       <div
-        className={`${sidebarOpen ? "w-60" : "w-0"
-          } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
+        className={`${
+          sidebarOpenLeft ? "w-60" : "w-0"
+        } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
         {/* 1. Header Container */}
         <div className="p-3 border-b border-white/20 flex items-center justify-between flex-shrink-0">
-          <h2 className="text-lg font-semibold">021 AI</h2>
-          <button onClick={handleCloseSidebar} className="">
+          <h2 className="text-xl font-bold font-mono">021 AI</h2>
+          <button onClick={handleCloseSidebarleft} className="">
             <ArrowLeftToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200" />
           </button>
         </div>
@@ -1179,8 +1189,8 @@ export default function ChatPage() {
         {/* Header */}
         <div className="backdrop-blur-md border-b border-white/20 px-6 py-3">
           <div className="flex items-center gap-4">
-            {!sidebarOpen && (
-              <button onClick={handleOpenSidebar}>
+            {!sidebarOpenLeft && (
+              <button onClick={handleOpenSidebarleft}>
                 <ArrowRightToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200" />
               </button>
             )}
@@ -1190,8 +1200,14 @@ export default function ChatPage() {
             </div>
 
             <div>
-              <h1 className="text-xl font-semibold">{activeRole}</h1>
+              <h1 className="text-xl font-bold font-mono">{activeRole}</h1>
             </div>
+
+             {!sidebarOpenRight && (
+              <button onClick={handleOpenSidebarright} className="ml-auto">
+                <ArrowLeftToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200 justify-self-end" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -1272,9 +1288,9 @@ export default function ChatPage() {
 
           {/* C-Suite Advisor Toggle Button */}
           <div className="absolute top-4 right-4 flex gap-2">
-            {!sidebarOpen && (
+            {!sidebarOpenRight && (
               <button
-                onClick={handleOpenSidebar}
+                onClick={handleOpenSidebarright}
                 className="group relative p-2 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 
                   hover:bg-white/20 hover:border-white/30 transition-all duration-300
                   shadow-lg shadow-black/10"
@@ -1370,13 +1386,14 @@ export default function ChatPage() {
 
       {/* C-SUITE ADVISOR */}
       <div
-        className={`${sidebarOpen ? "w-60" : "w-0"
-          } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
+        className={`${
+          sidebarOpenRight ? "w-60" : "w-0"
+        } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
         {/* 1. Header Container */}
         <div className="p-3 border-b border-white/20 flex items-center justify-between flex-shrink-0">
-          <h2 className="text-lg font-semibold">C-SUITE ADVISORS</h2>
+          <h2 className="text-lg font-mono font-bold">C-SUITE ADVISORS</h2>
           <button
-            onClick={handleCloseSidebar}
+            onClick={handleCloseSidebarright}
             className="p-1 rounded hover:bg-white/10 transition-colors">
             <ArrowRightToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200" />
           </button>
@@ -1405,7 +1422,7 @@ export default function ChatPage() {
               name="CFO"
               title="Chief Financial Officer"
               expertise="Financial Strategy & Risk Management"
-              avatar={CEOImage}
+              avatar={CFOImage}
               isActive={activeAdvisor === "cfo"}
               isReplying={replyingAdvisor === "cfo"}
               isThinking={thinkingAdvisor === "cfo"}
@@ -1421,7 +1438,7 @@ export default function ChatPage() {
               name="CTO"
               title="Chief Technology Officer"
               expertise="Digital Transformation & Innovation"
-              avatar={CEOImage}
+              avatar={CTOImage}
               isActive={activeAdvisor === "cto"}
               isReplying={replyingAdvisor === "cto"}
               isThinking={thinkingAdvisor === "cto"}
@@ -1437,7 +1454,7 @@ export default function ChatPage() {
               name="CMO"
               title="Chief Marketing Officer"
               expertise="Marketing Strategy & Brand Building"
-              avatar={CEOImage}
+              avatar={CMOImage}
               isActive={activeAdvisor === "cmo"}
               isReplying={replyingAdvisor === "cmo"}
               isThinking={thinkingAdvisor === "cmo"}

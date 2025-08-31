@@ -265,7 +265,7 @@ const CSuiteAdvisorCard: React.FC<CSuiteAdvisorCardProps> = ({
           <div className="relative">
             <div
               className={`
-              w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-500
+              w-16 h-16 rounded-full overflow-hidden border-2 transition-all duration-500
               ${
                 isThinking
                   ? "border-yellow-400/60 shadow-lg"
