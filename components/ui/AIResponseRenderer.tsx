@@ -82,16 +82,16 @@ const AIResponseRenderer: React.FC<AIResponseRendererProps> = ({
             inline ? (
               <code className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-sm font-mono font-semibold" {...props} />
             ) : (
-              <code className="block bg-gradient-to-br from-gray-900 to-gray-800 text-green-400 p-6 rounded-xl overflow-x-auto text-sm font-mono mb-6 shadow-lg border border-gray-700" {...props} />
+              <code className="block text-gray-400 p-4 rounded-xl overflow-x-auto text-sm font-mono " {...props} />
             ),
           
           pre: ({ node, ...props }) => (
-            <pre className="bg-gradient-to-br from-gray-900 to-gray-800 text-green-400 p-6 rounded-xl overflow-x-auto mb-6 shadow-lg border border-gray-700" {...props} />
+            <pre className="bg-gradient-to-br from-gray-900 to-gray-800 text-green-400 p-1 rounded-xl overflow-x-auto mb-6 shadow-lg border border-gray-700 break-words text-wrap" {...props} />
           ),
           
           // Blockquotes
           blockquote: ({ node, ...props }) => (
-            <blockquote className="border-l-4 border-blue-500 bg-gradient-to-r from-blue-50 to-indigo-50 pl-6 pr-4 py-4 my-6 italic text-gray-700 rounded-r-lg shadow-sm" {...props} />
+            <blockquote className="border-l-4 border-blue-500 bg-transparent pl-6 pr-4 my-6 italic text-gray-700 rounded-r-lg shadow-sm" {...props} />
           ),
           
           // Links

@@ -24,6 +24,7 @@ import Image from "next/image";
 import profile from "../../public/image.png";
 import proBg from "../../public/proBg.png";
 import AIResponseRenderer from "../../components/ui/AIResponseRenderer";
+import AIRenderer from "../../components/ui/renderer"
 import { useToast } from "../../components/ui/Toast";
 
 type ProviderRole = "user" | "assistant" | "system";
@@ -1129,7 +1130,7 @@ export default function ChatPage() {
               <h1 className="text-xl font-semibold">{activeRole}</h1>
             </div>
 
-            <div className="ml-auto">
+            {/* <div className="ml-auto">
               <button
                 onClick={() => {
                   if (!currentSessionId || !user?.id) return;
@@ -1146,7 +1147,7 @@ export default function ChatPage() {
                 title="Generate Report">
                 <FileText className="w-5 h-5 text-white/80 group-hover:text-white" />
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -1191,6 +1192,7 @@ export default function ChatPage() {
                       } text-white break-words text-wrap bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60`}>
                       <div className="whitespace-pre-wrap text-sm/5">
                         <AIResponseRenderer content={message.content} />
+                        {/* <AIRenderer content={message.content}/> */}
                       </div>
                     </div>
                   </div>
@@ -1225,7 +1227,7 @@ export default function ChatPage() {
           </div>
 
           {/* C-Suite Advisor Toggle Button */}
-          <div className="absolute top-4 right-4 flex gap-2">
+          {/* <div className="absolute top-4 right-4 flex gap-2">
             {!sidebarOpen && (
               <button
                 onClick={handleOpenSidebar}
@@ -1247,7 +1249,7 @@ export default function ChatPage() {
                 </svg>
               </button>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Input Area */}

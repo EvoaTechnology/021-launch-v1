@@ -26,6 +26,7 @@ export class ReportService {
           thresholdCount: 60,
           maxParts: 4,
         });
+        console.log("report", report);
         if (report && report.trim().length > 0) return report;
       } catch (e) {
         lastError = e;
@@ -45,6 +46,7 @@ export class ReportService {
           maxParts: 4,
           model: "gpt-4o-mini",
         });
+        console.log("report", report);
         if (report && report.trim().length > 0) return report;
       } catch (e) {
         lastError = e;

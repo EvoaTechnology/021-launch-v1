@@ -309,14 +309,15 @@ export async function callGeminiForReport(
   }
 
   const data = await response.json();
+  console.log("data", data);
   const parts = data?.candidates?.[0]?.content?.parts || [];
-
+  console.log("parts", parts);
   const textFromParts = parts
     .map((p) => (typeof p?.text === "string" ? p.text : ""))
     .filter((t) => t && t.trim().length > 0)
     .join("\n")
     .trim();
-
+  console.log("textFromParts", textFromParts);
   if (textFromParts) return textFromParts;
 
   const inlineFromParts = parts
@@ -326,7 +327,7 @@ export async function callGeminiForReport(
     .filter((t) => t && t.trim().length > 0)
     .join("\n")
     .trim();
-
+  console.log("inlineFromParts", inlineFromParts);
   if (inlineFromParts) return inlineFromParts;
 
   const feedback =
@@ -402,8 +403,10 @@ export async function generateReportWithChunkingGemini(params: {
         i + 1
       );
       partialReport = result;
+      console.log("partialReport", partialReport);
     }
     return partialReport || "";
+
   } else {
     const systemInstruction = buildReportSystemMessageForGemini(
       params.baseInstruction

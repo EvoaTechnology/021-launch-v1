@@ -147,6 +147,7 @@ export async function generateReportWithChunking(params: {
         model: params.model,
       });
       partialReport = result;
+      console.log("partialReport", partialReport);
     }
     return partialReport || "";
   } else {
