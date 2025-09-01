@@ -288,9 +288,8 @@ export default function FeaturesPage() {
           transition={{ duration: 0.7 }}
           className="text-center mb-4 sm:mb-6 lg:mb-8"
         >
-          <h1 className="italic shadow-cyan-500/25 text-2xl font:mono sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-300 mb-2 sm:mb-4">
-            021 AI Features
-          </h1>
+          <h1 className="text-4xl font-bold text-white mb-4">Vision Strategy Growth</h1>
+        <p className="text-lg text-blue-100">Discover the features that make <b>021 AI</b> your go-to startup partner</p>
         </motion.div>
 
         {/* Main Feature Circle Container - Hidden on Mobile */}
@@ -373,11 +372,11 @@ export default function FeaturesPage() {
             <div className="space-y-3 sm:space-y-4">
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• Idea Validator</h4>
-                <p className="text-blue-100 text-sm ml-4">Validates startup ideas, checks feasibility, and suggests refinements.</p>
+                <p className="text-blue-200 text-sm ml-4">Validates startup ideas, checks feasibility, and suggests refinements.</p>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• AI Co-Founders (Advisory Mode)</h4>
-                <ul className="text-blue-100 text-sm ml-4 space-y-1">
+                <ul className="text-blue-200 text-sm ml-4 space-y-1">
                   <li><strong>CEO AI</strong> → Guides on vision, mission, and strategy.</li>
                   <li><strong>CFO AI</strong> → Advises on revenue models, cost structures, and fundraising.</li>
                   <li><strong>CTO AI</strong> → Suggests tech stack, MVP path, and product feasibility.</li>
@@ -386,11 +385,11 @@ export default function FeaturesPage() {
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• 0 → 1 Journey</h4>
-                <p className="text-blue-100 text-sm ml-4">Helps founders go from raw idea to structured plan.</p>
+                <p className="text-blue-200 text-sm ml-4">Helps founders go from raw idea to structured plan.</p>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• Guidance, Not Execution</h4>
-                <p className="text-blue-100 text-sm ml-4">Acts like a mentor, giving direction and clarity.</p>
+                <p className="text-blue-200 text-sm ml-4">Acts like a mentor, giving direction and clarity.</p>
               </div>
             </div>
           </motion.div>
@@ -409,31 +408,31 @@ export default function FeaturesPage() {
             <div className="space-y-3 sm:space-y-4">
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• AI Co-Founder Team Expansion</h4>
-                <p className="text-purple-100 text-sm ml-4">Hire multiple AI co-founders (CEO, CTO, CFO, CMO, COO, CPO, Data Scientist, etc.).</p>
+                <p className="text-purple-200 text-sm ml-4">Hire multiple AI co-founders (CEO, CTO, CFO, CMO, COO, CPO, Data Scientist, etc.).</p>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• Build Mode</h4>
-                <p className="text-purple-100 text-sm ml-4">AI generates wireframes, code snippets, strategies, designs, and roadmaps.</p>
+                <p className="text-purple-200 text-sm ml-4">AI generates wireframes, code snippets, strategies, designs, and roadmaps.</p>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• Pitch Room</h4>
-                <p className="text-purple-100 text-sm ml-4">Create, analyze, and auto-generate investor pitch decks + simulate investor Q&A.</p>
+                <p className="text-purple-200 text-sm ml-4">Create, analyze, and auto-generate investor pitch decks + simulate investor Q&A.</p>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• AI Chat (Always-On Partner)</h4>
-                <p className="text-purple-100 text-sm ml-4">Real-time collaboration with specialized AI co-founders.</p>
+                <p className="text-purple-200 text-sm ml-4">Real-time collaboration with specialized AI co-founders.</p>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• Community Integration</h4>
-                <p className="text-purple-100 text-sm ml-4">Network with other founders, AI mentors, and investors.</p>
+                <p className="text-purple-200 text-sm ml-4">Network with other founders, AI mentors, and investors.</p>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• Analytics Dashboard</h4>
-                <p className="text-purple-100 text-sm ml-4">Track milestones, KPIs, and co-founder performance.</p>
+                <p className="text-purple-200 text-sm ml-4">Track milestones, KPIs, and co-founder performance.</p>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• Execution Layer</h4>
-                <p className="text-purple-100 text-sm ml-4">AI doesn't just guide, it does — builds, markets, models, and pitches alongside you.</p>
+                <p className="text-purple-200 text-sm ml-4">AI doesn't just guide, it does — builds, markets, models, and pitches alongside you.</p>
               </div>
             </div>
           </motion.div>

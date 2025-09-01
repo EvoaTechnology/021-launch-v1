@@ -6,7 +6,10 @@ import { useAuthStore } from "../store/authStore";
 import { useChatStore } from "../store/chatStore";
 // Removed ReportCard and ProgressBar from main chat
 import CSuiteAdvisorCard from "../../components/ui/c-suite-card";
-import CEOImage from "../../public/image.png";
+import CEOImage from "../../public/ceo-1.png";
+import CFOImage from "../../public/cfo-1.png";
+import CMOImage from "../../public/cmo-1.png";
+import CTOImage from "../../public/cto-1.png";
 // import { cRoles } from "../../roles/roles.types";
 // import type { CRole } from "../../roles/chat.types";
 import {
@@ -21,7 +24,7 @@ import {
   LogOut,
 } from "lucide-react";
 import Image from "next/image";
-import profile from "../../public/image.png";
+import profile from "../../public/ceo-1.png";
 import proBg from "../../public/proBg.png";
 import AIResponseRenderer from "../../components/ui/AIResponseRenderer";
 import AIRenderer from "../../components/ui/renderer";
@@ -88,7 +91,8 @@ export default function ChatPage() {
   const { toast } = useToast();
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpenLeft, setSidebarOpenLeft] = useState(true);
+  const [sidebarOpenRight, setSidebarOpenRight] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [proUser] = useState(false);
   const [activeRole, setActiveRole] = useState("Idea Validator");
@@ -105,9 +109,7 @@ export default function ChatPage() {
   const [clickedAdvisors, setClickedAdvisors] = useState<Set<string>>(
     new Set()
   );
-
-  // Advisor color mapping
-  const advisorColors = {
+  const advisorColors: Record<string, string> = {
     ceo: "blue",
     cfo: "green",
     cto: "purple",
@@ -116,14 +118,83 @@ export default function ChatPage() {
 
   // Function to get advisor color from role name
   const getAdvisorColor = (roleName: string): string => {
-    const roleToAdvisorMap: { [key: string]: string } = {
-      CEO: "blue",
-      CFO: "green",
-      CTO: "purple",
-      CMO: "pink",
-    };
-    return roleToAdvisorMap[roleName] || "gray";
+    return advisorColors[roleName.toLowerCase()] || "gray";
   };
+
+  // Function to get hex color for advisor
+  const getAdvisorHexColor = (roleName: string): string => {
+    const colorMap: Record<string, string> = {
+      blue: "#3b82f6",
+      green: "#22c55e",
+      purple: "#8b5cf6",
+      pink: "#ec4899",
+      gray: "#6b7280"
+    };
+    const colorKey = getAdvisorColor(roleName);
+    return colorMap[colorKey] || colorMap.gray;
+  };
+
+  // Function to get theme colors based on active advisor
+  const getThemeColors = () => {
+    if (!activeAdvisor) {
+      // Default theme when no advisor is selected
+      return {
+        primary: "#6b7280", // gray
+        primaryLight: "#9ca3af",
+        primaryDark: "#374151",
+        primaryBg: "rgba(107, 114, 128, 0.1)",
+        primaryBorder: "rgba(107, 114, 128, 0.3)",
+        primaryHover: "rgba(107, 114, 128, 0.2)"
+      };
+    }
+
+    const colorMap: Record<string, {
+      primary: string;
+      primaryLight: string;
+      primaryDark: string;
+      primaryBg: string;
+      primaryBorder: string;
+      primaryHover: string;
+    }> = {
+      ceo: {
+        primary: "#3b82f6", // blue
+        primaryLight: "#60a5fa",
+        primaryDark: "#1e40af",
+        primaryBg: "rgba(59, 130, 246, 0.1)",
+        primaryBorder: "rgba(59, 130, 246, 0.3)",
+        primaryHover: "rgba(59, 130, 246, 0.2)"
+      },
+      cfo: {
+        primary: "#22c55e", // green
+        primaryLight: "#4ade80",
+        primaryDark: "#15803d",
+        primaryBg: "rgba(34, 197, 94, 0.1)",
+        primaryBorder: "rgba(34, 197, 94, 0.3)",
+        primaryHover: "rgba(34, 197, 94, 0.2)"
+      },
+      cto: {
+        primary: "#8b5cf6", // purple
+        primaryLight: "#a78bfa",
+        primaryDark: "#7c3aed",
+        primaryBg: "rgba(139, 92, 246, 0.1)",
+        primaryBorder: "rgba(139, 92, 246, 0.3)",
+        primaryHover: "rgba(139, 92, 246, 0.2)"
+      },
+      cmo: {
+        primary: "#ec4899", // pink
+        primaryLight: "#f472b6",
+        primaryDark: "#be185d",
+        primaryBg: "rgba(236, 72, 153, 0.1)",
+        primaryBorder: "rgba(236, 72, 153, 0.3)",
+        primaryHover: "rgba(236, 72, 153, 0.2)"
+      }
+    };
+
+    return colorMap[activeAdvisor] || colorMap.ceo;
+  };
+
+  // Advisor color mapping
+
 
   // Use auth store
   const { user, checkAuth } = useAuthStore();
@@ -226,12 +297,17 @@ export default function ChatPage() {
   //   setSidebarOpen((prev) => !prev);
   // }, []);
 
-  const handleCloseSidebar = useCallback(() => {
-    setSidebarOpen(false);
+  const handleCloseSidebarleft= useCallback(() => {
+    setSidebarOpenLeft(false);
   }, []);
-
-  const handleOpenSidebar = useCallback(() => {
-    setSidebarOpen(true);
+  const handleOpenSidebarleft= useCallback(() => {
+    setSidebarOpenLeft(true);
+  }, []);
+  const handleCloseSidebarright = useCallback(() => {
+    setSidebarOpenRight(false);
+  }, []);
+  const handleOpenSidebarright = useCallback(() => {
+    setSidebarOpenRight(true);
   }, []);
 
   // const handleToggleAdvisorPanel = useCallback(() => {
@@ -900,12 +976,12 @@ export default function ChatPage() {
       {/* Sidebar */}
       <div
         className={`${
-          sidebarOpen ? "w-60" : "w-0"
+          sidebarOpenLeft ? "w-60" : "w-0"
         } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
         {/* 1. Header Container */}
         <div className="p-3 border-b border-white/20 flex items-center justify-between flex-shrink-0">
-          <h2 className="text-lg font-semibold">021 AI</h2>
-          <button onClick={handleCloseSidebar} className="">
+          <h2 className="text-xl font-bold font-mono">021 AI</h2>
+          <button onClick={handleCloseSidebarleft} className="">
             <ArrowLeftToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200" />
           </button>
         </div>
@@ -954,19 +1030,18 @@ export default function ChatPage() {
                     key={session._id}
                     onClick={() => handleSelectChatSession(session._id!)}
                     className={`group relative w-full text-left rounded-2xl transition-all duration-200 ease-out overflow-hidden
-    ${
-      currentSessionId === session._id
-        ? `bg-pink-800/12 backdrop-blur-xl border border-white/25 shadow-lg shadow-white/5
+    ${currentSessionId === session._id
+                        ? `bg-blue-900/60 backdrop-blur-xl border border-white/25 shadow-lg shadow-white/5
            before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-r 
            before:from-white/8 before:via-white/3 before:to-white/8 before:pointer-events-none
            after:absolute after:inset-px after:rounded-2xl after:bg-gradient-to-b 
            after:from-white/8 after:to-transparent after:pointer-events-none`
-        : `bg-white/4 backdrop-blur-md border border-white/8 
+                        : `bg-white/4 backdrop-blur-md border border-white/8 
            hover:bg-white/8 hover:border-white/15 hover:shadow-md hover:shadow-white/3
            hover:before:opacity-100 before:absolute before:inset-0 before:rounded-2xl 
            before:bg-gradient-to-r before:from-transparent before:via-white/3 before:to-transparent
            before:opacity-0 before:transition-opacity before:duration-200 before:pointer-events-none`
-    }`}
+                      }`}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
@@ -983,16 +1058,16 @@ export default function ChatPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div
-                            className={`font-medium text-xs transition-colors duration-200 truncate ${
-                              currentSessionId === session._id
+                            className={`font-medium text-xs transition-colors duration-200 truncate ${currentSessionId === session._id
                                 ? "text-white"
                                 : "text-white/80 group-hover:text-white/95"
-                            }`}>
+                              }`}>
                             {session.topic}
                           </div>
                         </div>
                         {currentSessionId === session._id && (
-                          <div className="flex-shrink-0 w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                          <div className="flex-shrink-0 w-1.5 h-1.5 bg-white/70 rounded-full duration-200 
+               group-hover:-translate-x-1.5"></div>
                         )}
 
                         <button
@@ -1002,7 +1077,7 @@ export default function ChatPage() {
                             handleDeleteChatSession(session._id!);
                           }}
                           disabled={deletingSessionId === session._id}
-                          className="p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="hidden group-hover:flex items-center justify-center p-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                           aria-label="Delete chat session">
                           {deletingSessionId === session._id ? (
                             <div className="w-4 h-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin" />
@@ -1076,11 +1151,11 @@ export default function ChatPage() {
                 <p className="text-white text-xs font-medium leading-tight">
                   {user?.email
                     ? (() => {
-                        const namePart = user.email.split("@")[0];
-                        return namePart.length > 12
-                          ? namePart.slice(0, 12)
-                          : namePart;
-                      })()
+                      const namePart = user.email.split("@")[0];
+                      return namePart.length > 12
+                        ? namePart.slice(0, 12)
+                        : namePart;
+                    })()
                     : "Loading..."}
                 </p>
                 <p className="text-white/50 text-xs leading-tight">Free tier</p>
@@ -1116,8 +1191,8 @@ export default function ChatPage() {
         {/* Header */}
         <div className="backdrop-blur-md border-b border-white/20 px-6 py-3">
           <div className="flex items-center gap-4">
-            {!sidebarOpen && (
-              <button onClick={handleOpenSidebar}>
+            {!sidebarOpenLeft && (
+              <button onClick={handleOpenSidebarleft}>
                 <ArrowRightToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200" />
               </button>
             )}
@@ -1127,8 +1202,14 @@ export default function ChatPage() {
             </div>
 
             <div>
-              <h1 className="text-xl font-semibold">{activeRole}</h1>
+              <h1 className="text-xl font-bold font-mono">{activeRole}</h1>
             </div>
+
+             {!sidebarOpenRight && (
+              <button onClick={handleOpenSidebarright} className="ml-auto">
+                <ArrowLeftToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200 justify-self-end" />
+              </button>
+            )}
 
             {/* <div className="ml-auto">
               <button
@@ -1159,8 +1240,8 @@ export default function ChatPage() {
                 {currentSessionId
                   ? "Loading messages..."
                   : chatSessions.length > 0
-                  ? "Loading your chat..."
-                  : "Creating your first chat..."}
+                    ? "Loading your chat..."
+                    : "Creating your first chat..."}
               </div>
             ) : displayMessages.length === 0 ? (
               <div className="text-center text-white/50 text-sm py-8">
@@ -1172,24 +1253,25 @@ export default function ChatPage() {
               displayMessages.map((message) => (
                 <div
                   key={message._id || Math.random().toString()}
-                  className={`flex ${
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  }`}>
-                  <div
-                    className={`flex max-w-screen items-start gap-3 ${
-                      message.role === "user" ? "flex-row-reverse" : ""
+                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
                     }`}>
+                  <div
+                    className={`flex max-w-screen items-start gap-3 ${message.role === "user" ? "flex-row-reverse" : ""
+                      }`}>
                     <div
-                      className={`rounded-2xl px-3 py-2 backdrop-blur-md ${
-                        message.role === "user"
+                      className={`rounded-2xl px-3 py-2 backdrop-blur-md ${message.role === "user"
                           ? "bg-white/10 border border-white/10 max-w-xl"
                           : message.activeRole &&
                             message.activeRole !== "Idea Validator"
-                          ? `max-w-4xl border-l-4 border-${getAdvisorColor(
-                              message.activeRole
-                            )}-400`
-                          : "max-w-4xl"
-                      } text-white break-words text-wrap bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60`}>
+                            ? "max-w-4xl border-l-4"
+                            : "max-w-4xl"
+                        } text-white break-words text-wrap bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60`}
+                      style={{
+                        borderLeftColor: message.activeRole &&
+                          message.activeRole !== "Idea Validator"
+                          ? getAdvisorHexColor(message.activeRole)
+                          : undefined
+                      }}>
                       <div className="whitespace-pre-wrap text-sm/5">
                         <AIResponseRenderer content={message.content} />
                         {/* <AIRenderer content={message.content}/> */}
@@ -1227,10 +1309,10 @@ export default function ChatPage() {
           </div>
 
           {/* C-Suite Advisor Toggle Button */}
-          {/* <div className="absolute top-4 right-4 flex gap-2">
-            {!sidebarOpen && (
+          <div className="absolute top-4 right-4 flex gap-2">
+            {!sidebarOpenRight && (
               <button
-                onClick={handleOpenSidebar}
+                onClick={handleOpenSidebarright}
                 className="group relative p-2 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 
                   hover:bg-white/20 hover:border-white/30 transition-all duration-300
                   shadow-lg shadow-black/10"
@@ -1270,8 +1352,8 @@ export default function ChatPage() {
                       currentSessionId
                         ? "Type your message here..."
                         : chatSessions.length > 0
-                        ? "Loading your chat..."
-                        : "Creating your chat..."
+                          ? "Loading your chat..."
+                          : "Creating your chat..."
                     }
                     className="w-full min-h-[40px] max-h-[84px] resize-none bg-transparent px-4 py-3 
                    text-white placeholder-white/60 focus:outline-none relative z-10
@@ -1382,13 +1464,13 @@ export default function ChatPage() {
       {/* C-SUITE ADVISOR */}
       <div
         className={`${
-          sidebarOpen ? "w-60" : "w-0"
+          sidebarOpenRight ? "w-60" : "w-0"
         } backdrop-blur-md border-r border-white/20 transition-all duration-300 overflow-hidden flex flex-col h-full`}>
         {/* 1. Header Container */}
         <div className="p-3 border-b border-white/20 flex items-center justify-between flex-shrink-0">
-          <h2 className="text-lg font-semibold">C-SUITE ADVISORS</h2>
+          <h2 className="text-lg font-mono font-bold">C-SUITE ADVISORS</h2>
           <button
-            onClick={handleCloseSidebar}
+            onClick={handleCloseSidebarright}
             className="p-1 rounded hover:bg-white/10 transition-colors">
             <ArrowRightToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200" />
           </button>
@@ -1419,7 +1501,7 @@ export default function ChatPage() {
               isLocked={true}
               title="Chief Financial Officer"
               expertise="Financial Strategy & Risk Management"
-              avatar={CEOImage}
+              avatar={CFOImage}
               isActive={activeAdvisor === "cfo"}
               isReplying={replyingAdvisor === "cfo"}
               isThinking={thinkingAdvisor === "cfo"}
@@ -1436,7 +1518,7 @@ export default function ChatPage() {
               isLocked={true}
               title="Chief Technology Officer"
               expertise="Digital Transformation & Innovation"
-              avatar={CEOImage}
+              avatar={CTOImage}
               isActive={activeAdvisor === "cto"}
               isReplying={replyingAdvisor === "cto"}
               isThinking={thinkingAdvisor === "cto"}
@@ -1453,7 +1535,7 @@ export default function ChatPage() {
               isLocked={true}
               title="Chief Marketing Officer"
               expertise="Marketing Strategy & Brand Building"
-              avatar={CEOImage}
+              avatar={CMOImage}
               isActive={activeAdvisor === "cmo"}
               isReplying={replyingAdvisor === "cmo"}
               isThinking={thinkingAdvisor === "cmo"}

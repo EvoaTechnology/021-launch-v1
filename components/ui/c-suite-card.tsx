@@ -28,7 +28,7 @@ const CSuiteAdvisorCard: React.FC<CSuiteAdvisorCardProps> = ({
   isClicked = false,
   isThinking = false,
   isLocked = false,
-  primaryColor = "blue",
+  primaryColor = "gray",
   className = "",
   onClick,
 }) => {
@@ -38,6 +38,17 @@ const CSuiteAdvisorCard: React.FC<CSuiteAdvisorCardProps> = ({
   const [messageIndex, setMessageIndex] = useState(0);
 
   const aiMessages = isClicked ? ["Ready to assist..."] : [name || "Advisor"];
+
+  // Color mapping for CSS custom properties
+  const colorMap: Record<string, { light: string; medium: string; dark: string; shadow: string }> = {
+    blue: { light: "#60a5fa", medium: "#3b82f6", dark: "#1e40af", shadow: "#3b82f6" },
+    green: { light: "#4ade80", medium: "#22c55e", dark: "#15803d", shadow: "#22c55e" },
+    purple: { light: "#a78bfa", medium: "#8b5cf6", dark: "#7c3aed", shadow: "#8b5cf6" },
+    pink: { light: "#f472b6", medium: "#ec4899", dark: "#be185d", shadow: "#ec4899" },
+    gray: { light: "#9ca3af", medium: "#6b7280", dark: "#374151", shadow: "#6b7280" },
+  };
+
+  const colors = colorMap[primaryColor] || colorMap.gray;
 
   useEffect(() => {
     const loadTimer = setTimeout(() => setIsLoaded(true), 200);
@@ -65,6 +76,12 @@ const CSuiteAdvisorCard: React.FC<CSuiteAdvisorCardProps> = ({
   return (
     <div
       onClick={isLocked ? undefined : onClick}
+      style={{
+        '--primary-light': colors.light,
+        '--primary-medium': colors.medium,
+        '--primary-dark': colors.dark,
+        '--primary-shadow': colors.shadow,
+      } as React.CSSProperties}
       className={`
         relative h-40 w-full
         bg-black border 
@@ -74,7 +91,7 @@ const CSuiteAdvisorCard: React.FC<CSuiteAdvisorCardProps> = ({
             : isReplying
             ? `border-${primaryColor}-400/40 shadow-lg shadow-${primaryColor}-500/10`
             : isActive
-            ? `border-${primaryColor}-500/50 shadow-md shadow-${primaryColor}-500/15`
+            ? "border-opacity-50 shadow-md"
             : "border-gray-800/60 hover:border-gray-700/80"
         }
         rounded-xl overflow-hidden
@@ -106,13 +123,20 @@ const CSuiteAdvisorCard: React.FC<CSuiteAdvisorCardProps> = ({
           absolute inset-0 transition-all duration-500
           ${
             isReplying
-              ? `bg-gradient-to-br from-${primaryColor}-950/40 via-black to-${primaryColor}-950/20`
+              ? "bg-gradient-to-br from-black via-black to-black"
               : isActive
-              ? `bg-gradient-to-br from-${primaryColor}-950/30 via-black to-${primaryColor}-950/10`
+              ? "bg-gradient-to-br from-black via-black to-black"
               : "bg-gradient-to-br from-gray-950/50 via-black to-gray-950/30"
           }
         `}
-        />
+          style={{
+          background: isReplying 
+            ? `linear-gradient(to bottom right, ${colors.dark}40, black, ${colors.dark}20)`
+            : isActive
+            ? `linear-gradient(to bottom right, ${colors.dark}30, black, ${colors.dark}10)`
+            : undefined
+        }}
+      />
 
         {/* Neural Network Pattern */}
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
@@ -165,13 +189,31 @@ const CSuiteAdvisorCard: React.FC<CSuiteAdvisorCardProps> = ({
               flex items-center gap-1.5 px-2 py-1 rounded-full text-xs
               ${
                 isReplying
-                  ? `bg-${primaryColor}-900/40 border border-${primaryColor}-700/30 text-${primaryColor}-300`
+                  ? "bg-opacity-40 border border-opacity-30"
                   : isActive
-                  ? `bg-${primaryColor}-950/50 border border-${primaryColor}-800/40 text-${primaryColor}-400`
+                  ? "bg-opacity-50 border border-opacity-40"
                   : "bg-gray-900/60 border border-gray-700/40 text-gray-400"
               }
               transition-all duration-300
-            `}>
+            `}
+            style={{
+              backgroundColor: isReplying 
+                ? `${colors.dark}40`
+                : isActive
+                ? `${colors.dark}50`
+                : undefined,
+              borderColor: isReplying
+                ? `${colors.medium}30`
+                : isActive
+                ? `${colors.dark}40`
+                : undefined,
+              color: isReplying
+                ? colors.light
+                : isActive
+                ? colors.medium
+                : undefined
+            }}
+          >
               <div className="flex gap-1">
                 <div className="w-1 h-1 bg-red-400 rounded-full"></div>
                 <div className="w-1 h-1 bg-yellow-400 rounded-full"></div>
@@ -180,10 +222,14 @@ const CSuiteAdvisorCard: React.FC<CSuiteAdvisorCardProps> = ({
                   w-1 h-1 rounded-full transition-colors duration-300
                   ${
                     isReplying
-                      ? `bg-${primaryColor}-400 animate-pulse`
+                      ? "animate-pulse"
                       : "bg-green-400"
                   }
-                `}></div>
+                `}
+                style={{
+                  backgroundColor: isReplying ? colors.medium : undefined
+                }}
+              ></div>
               </div>
               <span className="font-mono ml-1">
                 {isThinking

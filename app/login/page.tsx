@@ -21,8 +21,11 @@ export default function LoginPage() {
   }, [checkAuth]);
 
   useEffect(() => {
-    if (isAuthenticated && user) router.replace("/chat");
-  }, [isAuthenticated, user, router]);
+  if (isAuthenticated && user) {
+    router.replace("/"); // redirect to home instead of /chat
+  }
+}, [isAuthenticated, user, router]);
+
 
   // Show loading while checking authentication
   if (isLoading) {
@@ -36,17 +39,21 @@ export default function LoginPage() {
     );
   }
 
-  const handleSubmit = async (formData: FormData) => {
-    setIsLoading(true);
-    setError(null);
+ const handleSubmit = async (formData: FormData) => {
+  setIsLoading(true);
+  setError(null);
 
-    try {
-      await login(formData);
-    } catch {
-      setError("Login failed. Please check your credentials.");
-      setIsLoading(false);
-    }
-  };
+  try {
+    await login(formData);
+    router.replace("/chat"); // ✅ redirect only here
+  } catch (err: any) {
+    setError(err.message || "Login failed. Please check your credentials.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   return (
     <div style={{
@@ -135,15 +142,6 @@ export default function LoginPage() {
               Log in to access your AI workspace.
             </p>
           </div>
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-md text-sm">
-              {error}
-            </motion.div>
-          )}
 
           {error && (
             <motion.div

@@ -27,7 +27,7 @@ const contactMethods = [
 		icon: Mail,
 		contact: "connectevoa@gmail.com",
 		availability: "24/7",
-		color:"bg-gradient-to-br from-slate-600 to-black text-white border-slate-900",
+		color: "bg-gradient-to-br from-slate-500/80 via-slate-700/70 to-slate-600/60 text-white border-green-700",
 	},
 	{
 		title: "Live Chat",
@@ -35,7 +35,7 @@ const contactMethods = [
 		icon: MessageSquare,
 		contact: "Available in app",
 		availability: "Always online",
-		color: "bg-gradient-to-br from-green-800/80 via-green-700/70 to-green-600/60 text-white border-green-700",
+		color: "bg-gradient-to-br from-slate-500/80 via-slate-700/70 to-slate-600/60 text-white border-green-700",
 	},
 	{
 		title: "Phone Support",
@@ -43,7 +43,7 @@ const contactMethods = [
 		icon: Phone,
 		contact: "+91 9636641861, 9759054403",
 		availability: "Mon-Fri 9AM-6PM IST",
-		color: "bg-gradient-to-br from-green-800/80 via-green-700/70 to-green-600/60 text-white border-green-700",
+		color: "bg-gradient-to-br from-slate-500/80 via-slate-700/70 to-slate-600/60 text-white border-green-700",
 	},
 	{
 		title: "Help Center",
@@ -51,7 +51,7 @@ const contactMethods = [
 		icon: HelpCircle,
 		contact: "Self-service portal",
 		availability: "24/7",
-		color: "bg-gradient-to-br from-green-800/80 via-green-700/70 to-green-600/60 text-white border-green-700",
+		color: "bg-gradient-to-br from-slate-500/80 via-slate-700/70 to-slate-600/60 text-white border-green-700",
 	},
 ]
 
@@ -115,7 +115,7 @@ export default function ContactPage() {
 								return (
 									<Card
 										key={method.title}
-										className="hover:shadow-xl transition-all duration-200 group bg-gradient-to-br from-[#283593]/80 via-[#3949ab]/70 to-[#5c6bc0]/60 text-white shadow-lg border-white flex flex-col"
+										className="hover:shadow-xl transition-all duration-200 group bg-[#1E202859] border border-[#8EC5FF66] backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(142,197,255,0.15)]  text-white flex flex-col"
 									>
 										<CardContent className="flex flex-col items-center justify-center p-6 rounded-xl bg-transparent h-full min-h-[240px]">
 											<div className="text-center flex flex-col items-center justify-center h-full">
@@ -149,7 +149,7 @@ export default function ContactPage() {
 
 					{/* Right Column - Contact Form */}
 					<div className="flex flex-col justify-center">
-						<Card className="bg-gradient-to-br from-[#283593]/80 via-[#3949ab]/70 to-[#5c6bc0]/60 text-white shadow-lg h-full border-white">
+						<Card className="bg-[#1E202859] border border-[#8EC5FF66] backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(142,197,255,0.15)] text-white h-full">
 							<CardHeader>
 								<CardTitle className="text-white text-2xl">Feedback Form</CardTitle>
 								<CardDescription className="text-blue-100">
@@ -233,12 +233,14 @@ export default function ContactPage() {
 											className="w-full px-3 py-2 rounded-md bg-[#1b1b2f] text-white border border-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
 										/>
 									</div>
+									<div className="text-center">
 									<Button
 										type="submit"
-										className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:from-blue-700 hover:to-blue-900 py-3 text-lg font-medium"
+										className="w-fit bg-gradient-to-br from-slate-500/80 via-slate-700/70 to-slate-600/60 text-white border-green-700 text-white hover:from-blue-700 hover:to-blue-900 py-3 text-lg font-medium"
 									>
 										Send Message
 									</Button>
+									</div>
 								</form>
 							</CardContent>
 						</Card>

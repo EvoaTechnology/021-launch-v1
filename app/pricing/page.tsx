@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Brain, Check, CreditCard, Sparkles,X } from "lucide-react";
@@ -16,27 +16,31 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
+import LegalModal from "@/components/ui/LegalModal";
+import { useAuthStore } from "../store/authStore";
 
 export default function Pricing() {
   const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly"
   );
   const [selectedPlan, setSelectedPlan] = useState<string>("pro");
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // No authentication check needed for public pricing page
+
   const plans = [
     {
       id: "starter",
       name: "Starter",
-      description: "Perfect for early-stage startups and solo founders",
-      monthlyPrice: 29,
-      yearlyPrice: 290,
+      description: "Perfect to start and validate your first idea",
+      monthlyPrice: 0,
+      yearlyPrice: 0,
       features: [
-        "1 AI Co-founder",
-        "Basic pitch deck generator",
-        "Simple financial modeling",
-        "Email support",
+        "Idea validation (1 only)",
+        "AI Co-founder roles: CEO, CTO, CFO, CMO",
+        "Validation Report",
       ],
       cta: "Get Started",
       popular: false,
@@ -44,15 +48,17 @@ export default function Pricing() {
     {
       id: "pro",
       name: "Pro",
-      description: "Ideal for startups ready to scale and raise funding",
+      description: "Ideal for startups ready to build, scale, and raise",
       monthlyPrice: 79,
       yearlyPrice: 790,
       features: [
-        "3 AI Co-founders",
-        "Advanced pitch deck generator",
-        "Comprehensive financial modeling",
-        "Investor simulation",
-        "Priority support",
+        "Unlimited idea validation",
+        "AI Co-founder roles: CEO, CTO, CFO, CMO",
+        "Validation Report",
+        "Business Model Generator",
+        "Financial Projections",
+        "Pitch Deck Templates",
+        "Downloadable Reports",
       ],
       cta: "Go Pro",
       popular: true,
@@ -78,6 +84,14 @@ export default function Pricing() {
 
   const handlePlanSelect = (planId: string) => {
     setSelectedPlan(planId);
+  };
+
+  const handleStarterClick = () => {
+    if (isAuthenticated) {
+      router.push("/chat");
+    } else {
+      router.push("/login");
+    }
   };
 
   const handlePayment = async () => {
@@ -124,7 +138,7 @@ export default function Pricing() {
           "linear-gradient(220deg, rgb(15, 15, 16) 20%, rgb(7, 20, 52) 40%, rgb(22, 21, 21) 100%)",
       }}
     >
-      <header className="border-b border-[#1a237e] bg-[#0a1124] py-4 dark:border-[#1a237e] dark:bg-[#0a1124] sm:py-6">
+      {/* <header className="border-b border-[#1a237e] bg-[#0a1124] py-4 dark:border-[#1a237e] dark:bg-[#0a1124] sm:py-6">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-r from-blue-700 to-blue-400">
@@ -133,7 +147,7 @@ export default function Pricing() {
             <span className="text-lg text-white font-bold">Evoa O21</span>
           </div>
         </div>
-      </header>
+      </header> */}
 
       <main className="flex-1 py-8 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -146,8 +160,8 @@ export default function Pricing() {
               Choose Your Plan
             </h1>
             <p className="mt-2 text-base text-blue-200 sm:mt-4 sm:text-lg">
-              Select the perfect plan for your startup`s needs and get started
-              with Evoa O21
+              Select the perfect plan for your startup's needs and get started
+              with <b>Evoa O21</b>
             </p>
           </motion.div>
 
@@ -165,7 +179,7 @@ export default function Pricing() {
                   onCheckedChange={(checked) =>
                     setBillingCycle(checked ? "yearly" : "monthly")
                   }
-                  className="scale-90 sm:scale-100"
+                  className="scale-90 sm:scale-100 bg-gradient-to-r from-blue-600/90 to-blue-500/40"
                 />
                 <Label
                   htmlFor="billing-toggle"
@@ -204,6 +218,13 @@ export default function Pricing() {
                         ? "border-blue-400 ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-[#0a1124]"
                         : "border-blue-900/40 hover:border-blue-700/60"
                     }`}>
+                    {/* Blur intensity overlays per plan */}
+                    {plan.id === "pro" && (
+                      <span className="pointer-events-none absolute inset-0 z-10 bg-white/5 backdrop-blur-[3px]" aria-hidden="true" />
+                    )}
+                    {plan.id === "enterprise" && (
+                      <span className="pointer-events-none absolute inset-0 z-10 bg-white/10 backdrop-blur-[3px]" aria-hidden="true" />
+                    )}
                     {/* Glass shine overlay for Enterprise */}
                     {plan.id === "enterprise" && (
                       <span
@@ -238,15 +259,21 @@ export default function Pricing() {
                           />
                         </div>
                         <div className="mt-3 sm:mt-4">
-                          <span className="text-2xl font-bold sm:text-3xl text-white">
-                            $
-                            {billingCycle === "monthly"
-                              ? plan.monthlyPrice
-                              : plan.yearlyPrice}
-                          </span>
-                          <span className="text-blue-100">
-                            /{billingCycle === "monthly" ? "month" : "year"}
-                          </span>
+                          {plan.monthlyPrice === 0 && plan.yearlyPrice === 0 ? (
+                            <span className="text-2xl font-bold sm:text-3xl text-white">Free</span>
+                          ) : (
+                            <>
+                              <span className="text-2xl font-bold sm:text-3xl text-white">
+                                ₹
+                                {billingCycle === "monthly"
+                                  ? plan.monthlyPrice
+                                  : plan.yearlyPrice}
+                              </span>
+                              <span className="text-blue-100">
+                                /{billingCycle === "monthly" ? "month" : "year"}
+                              </span>
+                            </>
+                          )}
                           {billingCycle === "yearly" && (
                             <div className="mt-0.5 text-xs text-blue-100 sm:mt-1 sm:text-sm">
                               Save{" "}
@@ -279,12 +306,16 @@ export default function Pricing() {
                         className={`w-full ${
                           selectedPlan === plan.id
                             ? "bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white"
-                            : "bg-blue-900/80 text-white hover:bg-blue-800"
+                            : "bg-blue-900/80 text-white hover:bg-blue-800 hover:text-white"
                         }`}
                         variant={
                           selectedPlan === plan.id ? "default" : "outline"
                         }
-                        onClick={() => handlePlanSelect(plan.id)}>
+                        onClick={
+                          plan.id === "starter"
+                            ? handleStarterClick
+                            : () => handlePlanSelect(plan.id)
+                        }>
                         {plan.cta}
                       </Button>
                     </CardFooter>
@@ -345,12 +376,18 @@ export default function Pricing() {
             </div>
           </motion.div> */}
 
-          <div className="mt-12 text-center">
+        </div>
+      </main>
+      
+
+      <footer className="flex justify-center border-t border-[#1a237e] py-2 sm:py-2">
+        <div className="mx-auto max-w-7xl text px-4 sm:px-6 lg:px-8">
+          <div className="m-2 text-center">
             {/* <p className="text-sm text-blue-100">
               All plans include a 14-day money-back guarantee. No questions
               asked.
             </p> */}
-            <p className="mt-2 text-xs text-blue-200">
+            {/* <p className="mt-2 text-xs text-blue-200">
               <a
                 // href="https://vinkura.in"
                 target="_blank"
@@ -358,26 +395,17 @@ export default function Pricing() {
                 className="hover:text-blue-400 hover:underline">
                 Powered by EVO-A Pvt. Ltd.
               </a>
-            </p>
+            </p> */}
 
           </div>
-        </div>
-      </main>
-
-      <footer className="border-t border-[#1a237e] bg-[#0a1124] py-6 sm:py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-3 md:flex-row md:gap-4">
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-r from-blue-700 to-blue-400 sm:h-8 sm:w-8">
                 <Brain className="h-3.5 w-3.5 text-white sm:h-4 sm:w-4" />
               </div>
               <span className="text-base font-bold sm:text-lg text-white">Evoa O21</span>
-            </div>
+            </div> */}
             <div className="flex gap-4 sm:gap-6">
-              {/* <a
-                className="text-xs text-blue-100 hover:text-white sm:text-sm">
-                Terms
-              </a> */}
               <button
                 onClick={() => openModal("terms")}
                 className="text-xs text-blue-100 hover:text-white sm:text-sm"
@@ -390,10 +418,6 @@ export default function Pricing() {
               >
                 Privacy
               </button>
-              {/* <a
-                className="text-xs text-blue-100 hover:text-white sm:text-sm">
-                Privacy
-              </a> */}
               <a
                 href="/contact"
                 className="text-xs text-blue-100 hover:text-white sm:text-sm">
@@ -403,47 +427,93 @@ export default function Pricing() {
           </div>
         </div>
       </footer>
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-          onClick={closeModal} // close if click outside
-        >
-          <div
-            className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-lg"
-            onClick={(e) => e.stopPropagation()} // prevent close on inner click
-          >
-            {/* Close button */}
-            <button
-              onClick={closeModal}
-              className="absolute top-3 right-3 rounded-md bg-gray-200 p-1 hover:bg-gray-300"
-            >
-              <X className="h-5 w-5 text-gray-600" />
-            </button>
-
-            {/* Modal Content */}
-            {modalType === "terms" && (
-              <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Terms</h2>
-                <p className="text-sm text-gray-700">
-                  These are the Terms and Conditions. You can add your detailed
-                  terms content here...
-                </p>
-              </>
-            )}
-            {modalType === "privacy" && (
-              <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Privacy Policy
-                </h2>
-                <p className="text-sm text-gray-700">
-                  This is the Privacy Policy. You can add your privacy
-                  statement here...
-                </p>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      <LegalModal
+        isOpen={isOpen}
+        onClose={closeModal}
+        title={modalType === "terms" ? "Terms" : modalType === "privacy" ? "Privacy Policy" : ""}
+      >
+        {modalType === "terms" && (
+          <p className="text-sm text-gray-700 whitespace-pre-line">
+Welcome to 021 AI Co-Founder, your AI-powered partner in turning ideas into ventures. By accessing or using our website, app, or services (collectively “Platform”), you agree to these Terms.
+<ul className="list-[square] pl-6">
+  <li>Eligibility: <br></br>
+You must be at least 18 years old to use the Platform.
+You agree to provide accurate information when registering.</li>
+  <li>Nature of Service: <br></br>
+021 AI Co-Founder is an AI-based guidance platform. It provides insights, recommendations, and strategic support but does not replace professional legal, financial, or business advice.
+Any decisions you make using the Platform remain your sole responsibility.</li>
+  <li>User Conduct: <br></br>
+You agree not to:
+Use the Platform for unlawful, harmful, or fraudulent purposes.
+Upload malicious content or attempt to disrupt system integrity.
+Infringe on intellectual property rights of others.</li>
+  <li> Intellectual Property: <br></br>
+All technology, models, algorithms, branding, and content within the Platform are the property of EVOA Technology Pvt Ltd.
+You retain ownership of the content, ideas, and business information you submit. By using the Platform, you grant us a limited, non-exclusive license to process, analyze, and use your data solely for service delivery and improvement.
+</li>
+  <li> Privacy & Data Use: <br></br>
+Your personal and business data is protected under our Privacy Policy.
+We do not sell your personal information to third parties.
+Data may be used to enhance features, personalize insights, and ensure compliance with applicable law.</li>
+  <li>No Guarantee of Outcomes: <br></br>
+We provide AI-driven guidance. However:
+We do not guarantee funding, success, profitability, or specific results.
+The Platform is a tool, not a replacement for human expertise or execution.</li>
+  <li>Limitation of Liability: <br></br>
+To the maximum extent permitted by law, EVOA Technology Pvt Ltd is not liable for:
+Business losses, missed opportunities, or damages resulting from reliance on AI guidance.
+Indirect, incidental, or consequential damages.</li>
+  <li>Termination: <br></br>
+We may suspend or terminate your account if you breach these Terms or misuse the Platform.</li>
+  <li>Changes to Terms: <br></br>
+We may update these Terms periodically. Continued use of the Platform means you accept the updated Terms.</li>
+  <li>Governing Law & Jurisdiction: <br></br>
+These Terms shall be governed by and construed in accordance with the laws of India. Any disputes arising out of or in connection with these Terms or the use of the Platform shall be subject to the exclusive jurisdiction of the courts in Bareilly, Uttar Pradesh.
+By using 021 AI Co-Founder, you agree to these Terms.</li>
+</ul>
+          </p>
+        )}
+        {modalType === "privacy" && (
+          <p className="text-sm text-gray-700 whitespace-pre-line">
+Your privacy matters. This Privacy Policy explains how we collect, use, store, and protect your information when you use 021 AI Co-Founder.
+<ul className="list-[square] pl-6">
+  <li>Information We Collect
+Personal Information: Name, email, phone, company details (when provided during signup).
+Usage Data: Log files, browser type, device information, and interactions with the Platform.
+Business Data: Ideas, documents, and inputs you provide for AI analysis.</li>  
+  <li>How We Use Your Data
+We use your data to:
+Deliver AI-powered insights and recommendations.
+Personalize your user experience.
+Improve and train our AI models (anonymized where possible).
+Ensure platform security and compliance with laws.</li>  
+  <li> Data Protection
+Your data is stored securely with encryption and strict access controls.
+We do not sell or rent your personal information.
+We may share anonymized or aggregated insights for research, reporting, or product improvement.</li>  
+  <li> Third-Party Services
+We may use third-party providers (e.g., hosting, analytics, payment processors). They are bound by confidentiality and data protection agreements.
+We are not responsible for third-party websites linked through the Platform.</li>  
+  <li>User Rights
+Depending on your jurisdiction, you may have the right to:
+Access, update, or delete your data.
+Opt out of certain data uses (like marketing).
+Request a copy of your stored information.
+To exercise these rights, contact us at: connectevoa@gmail.com</li>  
+  <li> Cookies & Tracking
+We use cookies and similar technologies to enhance performance, analytics, and personalization. You can disable cookies in your browser settings.</li>  
+  <li> Data Retention
+We retain your information as long as your account is active or as required by law.</li>  
+  <li> Children’s Privacy
+Our services are not directed at individuals under 18. We do not knowingly collect data from children.</li>  
+  <li>Policy Updates
+We may update this Privacy Policy from time to time. Any changes will be posted here, with the effective date updated.
+</li>   
+</ul>
+Contact Us:
+If you have questions about this Privacy Policy, email us at: connectevoa@gmail.com          </p>
+        )}
+      </LegalModal>
     </div>
   );
 }
