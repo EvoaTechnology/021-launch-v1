@@ -18,16 +18,16 @@ const AIResponseRenderer: React.FC<AIResponseRendererProps> = ({
         components={{
           // Headings
           h1: ({ node, ...props }) => (
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6 mt-8 first:mt-0" {...props} />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-gray-200 mb-6 mt-8 first:mt-0" {...props} />
           ),
           h2: ({ node, ...props }) => (
-            <h2 className="text-3xl font-bold text-gray-800 mb-4 mt-6 first:mt-0 border-b-2 border-gray-200 pb-2" {...props} />
+            <h2 className="text-3xl font-bold text-gray-200 mb-4 mt-6 first:mt-0 border-b-2 border-gray-200 pb-2" {...props} />
           ),
           h3: ({ node, ...props }) => (
-            <h3 className="text-2xl font-semibold text-gray-800 mb-3 mt-5 first:mt-0" {...props} />
+            <h3 className="text-2xl font-semibold text-gray-200 mb-3 mt-5 first:mt-0" {...props} />
           ),
           h4: ({ node, ...props }) => (
-            <h4 className="text-xl font-semibold text-gray-700 mb-3 mt-4 first:mt-0" {...props} />
+            <h4 className="text-xl font-semibold text-gray-200 mb-3 mt-4 first:mt-0" {...props} />
           ),
           
           // Paragraphs
