@@ -1,45 +1,89 @@
 "use client";
 
-import React from "react";
-import { ValidationReport, ValidationReportData } from "../../components/ui/ValidationReport";
+import React, { useEffect, useMemo, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import {
+  ValidationReport,
+  ValidationReportData,
+} from "../../components/ui/ValidationReport";
+import { parseTaggedReport } from "../../lib/services/report-parser";
 
-// Example dummy data matching the image
-const dummyData: ValidationReportData = {
-  ideaName: "NewIdea",
-  subtitle: "An AI-driven platform for personalized nutrition and wellness guidance.",
-  statusLabel: "Validated",
-  score: 8.2,
-  quickTake: "This concept addresses a growing need for personalized nutrition and wellness solutions, offering a scalable approach to improving health outcomes. Challenges include ensuring user engagement and maintaining data privacy.",
-  problemMarketFit: "Lack of personalized nutrition guidance leads to ineffective eating habits in health conscious individuals.",
-  aiComment: "Addressing this problem can significantly improve health outcomes for a large and growing market.",
-  market: { tam: "50M", sam: "10M", som: "2M" },
-  competitors: [
-    { name: "Competitor A", strength: "", weakness: "" },
-    { name: "Competitor B", strength: "Strong Ux", weakness: "High price" },
-    { name: "Competitor C", strength: "Nartoy focats", weakness: "Neinprlocus" }
-  ],
-  solutionSummary: "An AI-powered platform that offers personalized nutrition and wellness plans.",
-  recommendations: [
-    "Enhance data privacy measures",
-    "Improve user engagement features"
-  ],
-  risks: {
-    topRisks: [
-      { risk: "Market saturation", description: "Risk sutihgentes" },
-      { risk: "Competition", description: "Market saturas tion.ekstbst" },
-      { risk: "Data privacy concerns", description: "Competition ia data privacy partnates" }
-    ],
-    riskLevel: "Medium",
-    riskLevelValue: 60
-  },
-  goToMarket: { 
-    earlyStrategy: "Launch with a targeted beta program.", 
-    channels: ["SEO", "Social ads", "influencer parhir-", "Content marketing"] 
-  },
-  finalVerdict: 8.2,
-};
-
-// Default export required for Next.js page
 export default function Page() {
-  return <ValidationReport data={dummyData} />;
+  const params = useSearchParams();
+  const router = useRouter();
+  const sessionId = params.get("sessionId");
+  const userId = params.get("userId");
+  const [data, setData] = useState<ValidationReportData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const canFetch = useMemo(() => !!sessionId && !!userId, [sessionId, userId]);
+
+  useEffect(() => {
+    if (!canFetch) return;
+    const controller = new AbortController();
+    let cancelled = false;
+
+    const run = async (attempt = 1) => {
+      try {
+        const resp = await fetch(
+          `/api/report/${userId}?sessionId=${encodeURIComponent(sessionId!)}`,
+          { signal: controller.signal }
+        );
+        const json = await resp.json();
+        if (!resp.ok) throw new Error(json?.error || "Failed to fetch report");
+        if (cancelled) return;
+        const parsed = parseTaggedReport(String(json.report || ""));
+        setData(parsed);
+      } catch (e: unknown) {
+        if (cancelled) return;
+        const isAbort = e instanceof DOMException && e.name === "AbortError";
+        if (isAbort) return; // ignore aborts
+        // retry once on transient errors
+        if (attempt === 1) {
+          setTimeout(() => run(2), 400);
+          return;
+        }
+        const message = e instanceof Error ? e.message : String(e);
+        setError(message);
+      }
+    };
+
+    run(1);
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [canFetch, sessionId, userId]);
+
+  if (!canFetch) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center text-white">
+        Missing user or session. Go back to chat.
+        <button className="ml-3 underline" onClick={() => router.push("/chat")}>
+          Chat
+        </button>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-screen flex flex-col items-center justify-center text-white">
+        <div className="mb-2">Error: {error}</div>
+        <button className="underline" onClick={() => router.push("/chat")}>
+          Back to chat
+        </button>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center text-white">
+        Generating your report...
+      </div>
+    );
+  }
+
+  return <ValidationReport data={data} />;
 }

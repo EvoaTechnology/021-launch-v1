@@ -17,6 +17,7 @@ import {
   Send,
   Plus,
   MessageSquare,
+  Lightbulb,
   ArrowLeftToLine,
   ArrowRightToLine,
   UserRound,
@@ -26,6 +27,7 @@ import Image from "next/image";
 import profile from "../../public/ceo-1.png";
 import proBg from "../../public/proBg.png";
 import AIResponseRenderer from "../../components/ui/AIResponseRenderer";
+import AIRenderer from "../../components/ui/renderer";
 import { useToast } from "../../components/ui/Toast";
 
 type ProviderRole = "user" | "assistant" | "system";
@@ -1208,6 +1210,25 @@ export default function ChatPage() {
                 <ArrowLeftToLine className="h-5 w-5 text-white/70 group-hover:text-white transition-colors duration-200 justify-self-end" />
               </button>
             )}
+
+            {/* <div className="ml-auto">
+              <button
+                onClick={() => {
+                  if (!currentSessionId || !user?.id) return;
+                  // Navigate to Report page with params
+                  const url = `/Report?sessionId=${encodeURIComponent(
+                    currentSessionId
+                  )}&userId=${encodeURIComponent(user.id)}`;
+                  router.push(url);
+                }}
+                disabled={!currentSessionId || !user?.id}
+                className="group relative p-2 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 
+                  hover:bg-white/20 hover:border-white/30 transition-all duration-300
+                  shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Generate Report">
+                <FileText className="w-5 h-5 text-white/80 group-hover:text-white" />
+              </button>
+            </div> */}
           </div>
         </div>
 
@@ -1253,6 +1274,7 @@ export default function ChatPage() {
                       }}>
                       <div className="whitespace-pre-wrap text-sm/5">
                         <AIResponseRenderer content={message.content} />
+                        {/* <AIRenderer content={message.content}/> */}
                       </div>
                     </div>
                   </div>
@@ -1309,7 +1331,7 @@ export default function ChatPage() {
                 </svg>
               </button>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Input Area */}
@@ -1319,12 +1341,12 @@ export default function ChatPage() {
               <div className="flex-1 relative">
                 <div
                   className="relative rounded-2xl bg-transparent backdrop-blur-xl border-2 border-white/20 
-                        shadow-lg shadow-black/10 
-                        before:absolute before:inset-0 before:rounded-2xl 
-                        before:pointer-events-none
-                        after:absolute after:inset-px after:rounded-2xl 
-                        after:pointer-events-none
-                        hover:border-white/30 hover:bg-white/8 transition-all duration-300">
+                    shadow-lg shadow-black/10 
+                    before:absolute before:inset-0 before:rounded-2xl 
+                    before:pointer-events-none
+                    after:absolute after:inset-px after:rounded-2xl 
+                    after:pointer-events-none
+                    hover:border-white/30 hover:bg-white/8 transition-all duration-300">
                   <textarea
                     placeholder={
                       currentSessionId
@@ -1333,48 +1355,103 @@ export default function ChatPage() {
                           ? "Loading your chat..."
                           : "Creating your chat..."
                     }
-                    className="w-full min-h-[60px] max-h-32 resize-none bg-transparent px-4 py-3 pr-14 
-                       text-white placeholder-white/60 focus:outline-none relative z-10
-                       scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20"
+                    className="w-full min-h-[40px] max-h-[84px] resize-none bg-transparent px-4 py-3 
+                   text-white placeholder-white/60 focus:outline-none relative z-10
+                   scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 rounded-t-2xl"
+                    rows={1}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     disabled={isTyping || !currentSessionId}
                   />
 
-                  <button
-                    onClick={handleSendMessage}
-                    disabled={
-                      !inputValue.trim() || isTyping || !currentSessionId
-                    }
-                    className="absolute right-2 bottom-2 group
-                       bg-gradient-to-r from-black/80 to-black/80 backdrop-blur-sm
-                       hover:from-blue-400/90 hover:to-blue-500/90 
-                       disabled:from-white/10 disabled:to-white/5 disabled:cursor-not-allowed 
-                       rounded-4xl h-10 w-10 flex items-center justify-center
-                       border border-white/20 hover:border-white/40
-                       transition-all duration-200 ease-out
-                       shadow-md hover:shadow-lg hover:scale-105
-                       before:absolute before:inset-0 before:rounded-xl 
-                       before:bg-gradient-to-t before:from-transparent before:to-white/10 
-                       before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200">
-                    {isTyping ? (
+                  {/* Buttons Row */}
+                  <div className="flex justify-between items-center px-3 py-2 ">
+                    {/* Left Button (Idea Validator) */}
+                    <button
+                      onClick={() => {
+                        setActiveRole("Idea Validator");
+                        setActiveAdvisor("idea_validator");
+                        setClickedAdvisors(new Set(["idea_validator"]));
+                      }}
+                      className={`group
+                     ${
+                       activeRole === "Idea Validator"
+                         ? "bg-gradient-to-r from-yellow-400/20 to-yellow-500/20 backdrop-blur-sm hover:from-yellow-400/30 hover:to-yellow-500/30 border-yellow-400/40"
+                         : "bg-gradient-to-r from-black/80 to-black/80 backdrop-blur-sm hover:from-yellow-400/20 hover:to-yellow-500/20 border-white/20"
+                     }
+                     disabled:from-white/10 disabled:to-white/5 disabled:cursor-not-allowed 
+                     rounded-xl h-10 w-10 flex items-center justify-center
+                     hover:border-yellow-400/40
+                     transition-all duration-200 ease-out
+                     shadow-md hover:shadow-lg hover:scale-105
+                     before:absolute before:inset-0 before:rounded-xl 
+                     ${
+                       activeRole === "Idea Validator"
+                         ? "before:bg-gradient-to-t before:from-transparent before:to-yellow-300/10"
+                         : "before:bg-gradient-to-t before:from-transparent before:to-white/10"
+                     }
+                     before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200`}>
+                      <Lightbulb
+                        className={`h-4 w-4 transition-all duration-200 stroke-[2.5]
+                          ${
+                            activeRole === "Idea Validator"
+                              ? "text-yellow-400 group-hover:text-yellow-300"
+                              : "text-white group-disabled:text-white/40 group-hover:text-yellow-400"
+                          }
+                          group-hover:scale-110`}
+                        fill={
+                          activeRole === "Idea Validator"
+                            ? "currentColor"
+                            : "none"
+                        }
+                      />
                       <div
-                        aria-busy="true"
-                        className="w-4 h-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin"
+                        className={`absolute inset-0 rounded-xl border opacity-0 
+                          ${
+                            activeRole === "Idea Validator"
+                              ? "border-yellow-300/50"
+                              : "border-white/30"
+                          }
+                          group-hover:opacity-100 transition-opacity duration-200 pointer-events-none`}
                       />
-                    ) : (
-                      <Send
-                        className="h-4 w-4 text-white group-disabled:text-white/40 
-                              group-hover:translate-x-0.5 group-hover:-translate-y-0.5 
-                              transition-transform duration-200 stroke-[3]"
+                    </button>
+
+                    {/* Right Button (Send) */}
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={
+                        !inputValue.trim() || isTyping || !currentSessionId
+                      }
+                      className="group
+                     bg-gradient-to-r from-black/80 to-black/80 backdrop-blur-sm
+                     hover:from-blue-400/90 hover:to-blue-500/90 
+                     disabled:from-white/10 disabled:to-white/5 disabled:cursor-not-allowed 
+                     rounded-xl h-10 w-10 flex items-center justify-center
+                     border border-white/20 hover:border-white/40
+                     transition-all duration-200 ease-out
+                     shadow-md hover:shadow-lg hover:scale-105
+                     before:absolute before:inset-0 before:rounded-xl 
+                     before:bg-gradient-to-t before:from-transparent before:to-white/10 
+                     before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200">
+                      {isTyping ? (
+                        <div
+                          aria-busy="true"
+                          className="w-4 h-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin"
+                        />
+                      ) : (
+                        <Send
+                          className="h-4 w-4 text-white group-disabled:text-white/40 
+                            group-hover:translate-x-0.5 group-hover:-translate-y-0.5 
+                            transition-transform duration-200 stroke-[3]"
+                        />
+                      )}
+                      <div
+                        className="absolute inset-0 rounded-xl border border-white/30 opacity-0 
+                          group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
                       />
-                    )}
-                    <div
-                      className="absolute inset-0 rounded-xl border border-white/30 opacity-0 
-                            group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
-                    />
-                  </button>
+                    </button>
+                  </div>
 
                   <div className="absolute inset-px rounded-2xl bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none" />
                 </div>
@@ -1404,6 +1481,7 @@ export default function ChatPage() {
           <div className="h-40 w-full bg-transparent">
             <CSuiteAdvisorCard
               name="CEO"
+              isLocked={false}
               title="Chief Executive Officer"
               expertise="Strategic Leadership & Vision"
               avatar={CEOImage}
@@ -1420,6 +1498,7 @@ export default function ChatPage() {
           <div className="h-40 w-full bg-transparent">
             <CSuiteAdvisorCard
               name="CFO"
+              isLocked={true}
               title="Chief Financial Officer"
               expertise="Financial Strategy & Risk Management"
               avatar={CFOImage}
@@ -1436,6 +1515,7 @@ export default function ChatPage() {
           <div className="h-40 w-full bg-transparent">
             <CSuiteAdvisorCard
               name="CTO"
+              isLocked={true}
               title="Chief Technology Officer"
               expertise="Digital Transformation & Innovation"
               avatar={CTOImage}
@@ -1452,6 +1532,7 @@ export default function ChatPage() {
           <div className="h-40 w-full bg-transparent">
             <CSuiteAdvisorCard
               name="CMO"
+              isLocked={true}
               title="Chief Marketing Officer"
               expertise="Marketing Strategy & Brand Building"
               avatar={CMOImage}
