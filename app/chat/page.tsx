@@ -1331,7 +1331,7 @@ export default function ChatPage() {
                 </svg>
               </button>
             )}
-          </div> */}
+          </div> 
         </div>
 
         {/* Input Area */}
