@@ -3,6 +3,7 @@ import { getAvailableAPIKeys } from "../config/api-config";
 import { callGeminiAPI } from "./gemini-provider";
 import { callXAIAPI } from "./xai-provider";
 import { callGroqAPI } from "./groq-provider";
+import { callOpenAIAPI } from "./openai-provider";
 import { logger } from "../utils/logger";
 import type { ProviderMessage, ProviderResult } from "../../types/shared";
 
@@ -130,6 +131,7 @@ export class APIProviderFactory {
 
     logger.info("🎯 PROVIDER SELECTION STARTED:", {
       availableKeys: {
+        openai: !!apiKeys.openai,
         gemini: !!apiKeys.gemini,
         groq: !!apiKeys.groq,
         xai: !!apiKeys.xai,
@@ -147,10 +149,48 @@ export class APIProviderFactory {
       droppedCount: messages.length - safeMessages.length,
     });
 
-    // 1) Gemini (primary)
+    // 1) OpenAI (primary)
+    if (apiKeys.openai) {
+      try {
+        logger.info("🔄 [OPENAI] ATTEMPTING PRIMARY PROVIDER...");
+        logProviderContext(safeMessages, "openai");
+
+        const startTime = Date.now();
+        const response = await callOpenAIAPI(
+          safeMessages,
+          apiKeys.openai,
+          isBusinessRelated,
+          activeRole
+        );
+        const duration = Date.now() - startTime;
+
+        const { cleaned } = response;
+
+        logger.info("✅ [OPENAI] SUCCESS:", {
+          provider: "openai",
+          responseTime: `${duration}ms`,
+          responseLength: cleaned.length,
+          confidence: 95,
+        });
+
+        return {
+          content: cleaned,
+          provider: "openai",
+          confidence: 95,
+        };
+      } catch (error) {
+        logger.warn("❌ [OPENAI] FAILED:", {
+          provider: "openai",
+          error: error instanceof Error ? error.message : String(error),
+          fallbackTo: "gemini",
+        });
+      }
+    }
+
+    // 2) Gemini (secondary)
     if (apiKeys.gemini) {
       try {
-        logger.info("🔄 [GEMINI] ATTEMPTING PRIMARY PROVIDER...");
+        logger.info("🔄 [GEMINI] ATTEMPTING SECONDARY PROVIDER...");
         logProviderContext(safeMessages, "gemini");
 
         const startTime = Date.now();
@@ -185,10 +225,10 @@ export class APIProviderFactory {
       }
     }
 
-    // 2) Groq (secondary)
+    // 3) Groq (tertiary)
     if (apiKeys.groq) {
       try {
-        logger.info("🔄 [GROQ] ATTEMPTING SECONDARY PROVIDER...");
+        logger.info("🔄 [GROQ] ATTEMPTING TERTIARY PROVIDER...");
         logProviderContext(safeMessages, "groq");
 
         const startTime = Date.now();
@@ -223,10 +263,10 @@ export class APIProviderFactory {
       }
     }
 
-    // 3) XAI (tertiary)
+    // 4) XAI (quaternary)
     if (apiKeys.xai) {
       try {
-        logger.info("🔄 [XAI] ATTEMPTING TERTIARY PROVIDER...");
+        logger.info("🔄 [XAI] ATTEMPTING QUATERNARY PROVIDER...");
         logProviderContext(safeMessages, "xai");
 
         const startTime = Date.now();
@@ -271,7 +311,9 @@ export class APIProviderFactory {
     const apiKeys = getAvailableAPIKeys();
     const providers: string[] = [];
 
+    if (apiKeys.openai) providers.push("openai");
     if (apiKeys.gemini) providers.push("gemini");
+    if (apiKeys.groq) providers.push("groq");
     if (apiKeys.xai) providers.push("xai");
 
     return providers;

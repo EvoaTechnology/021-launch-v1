@@ -2,6 +2,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { logError } from "../../../lib/utils/logging-utils";
 import { callGeminiAPIForTitle } from "../../../lib/providers/gemini-provider";
+import { callOpenAIAPIForTitle } from "../../../lib/providers/openai-provider";
+import { getAvailableAPIKeys } from "../../../lib/config/api-config";
 import { logger } from "../../../lib/utils/logger";
 import { createClient as createSupabaseServerClient } from "../../../utils/supabase/server";
 import { buildRateKey, checkRateLimit } from "../../../lib/utils/rate-limit";
@@ -34,8 +36,23 @@ export async function POST(request: NextRequest) {
 
     const { userMsg } = await request.json();
     logger.debug("--------------getting title--------------");
+    
+    const apiKeys = getAvailableAPIKeys();
+    
+    // Try OpenAI first, then fallback to Gemini
     try {
-      const apiResponseForTitle = await callGeminiAPIForTitle(userMsg);
+      let apiResponseForTitle: string;
+      
+      if (apiKeys.openai) {
+        logger.debug("Using OpenAI for title generation");
+        apiResponseForTitle = await callOpenAIAPIForTitle(userMsg, apiKeys.openai);
+      } else if (apiKeys.gemini) {
+        logger.debug("Using Gemini for title generation");
+        apiResponseForTitle = await callGeminiAPIForTitle(userMsg);
+      } else {
+        throw new Error("No API keys available for title generation");
+      }
+      
       logger.debug("apiResponseForTitle", apiResponseForTitle);
       logger.debug("--------------title generated--------------");
       return NextResponse.json({ title: apiResponseForTitle });

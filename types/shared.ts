@@ -12,7 +12,7 @@ export interface ProviderMessage {
 // Unified provider result contract
 export interface ProviderResult {
   content: string;
-  provider: "gemini" | "groq" | "xai";
+  provider: "openai" | "gemini" | "groq" | "xai";
   confidence: number;
 }
 
