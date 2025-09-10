@@ -16,6 +16,9 @@ export default function RegisterPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<"terms" | "privacy" | null>(null);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
   const openModal = (type: "terms" | "privacy") => {
     setModalType(type);
@@ -26,6 +29,16 @@ export default function RegisterPage() {
     setIsOpen(false);
     setModalType(null);
   };
+
+  // Check if passwords match whenever they change
+  useEffect(() => {
+    if (confirmPassword) {
+      setPasswordsMatch(password === confirmPassword);
+    } else {
+      setPasswordsMatch(true); // Don't show error when confirm field is empty
+    }
+  }, [password, confirmPassword]);
+
   // Redirect if already authenticated
   useEffect(() => {
     // Trigger auth check once (guarded in the store)
@@ -51,6 +64,16 @@ export default function RegisterPage() {
   const handleSubmit = async (formData: FormData) => {
     if (!agreedToTerms) {
       setError("You must agree to the terms and conditions to continue.");
+      return;
+    }
+
+    if (!passwordsMatch) {
+      setError("Passwords do not match. Please check and try again.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
       return;
     }
 
@@ -158,7 +181,7 @@ export default function RegisterPage() {
         >
           Create your account
         </h1>
-        <p className="text-gray-300">Join our AI revolution — it's free.</p>
+        <p className="text-gray-300">Join our AI revolution — it&apos;s free.</p>
       </div>
 
       {error && (
@@ -188,8 +211,35 @@ export default function RegisterPage() {
             required
             placeholder="Password (min 6 characters)"
             minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-gray-700/50 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-500 transition-all duration-300"
           />
+        </div>
+        <div>
+          <input
+            type="password"
+            name="confirmPassword"
+            required
+            placeholder="Confirm Password"
+            minLength={6}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className={`w-full bg-gray-700/50 border rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-300 ${
+              !passwordsMatch && confirmPassword
+                ? "border-red-500 focus:ring-red-400 focus:border-red-500"
+                : "border-gray-600 focus:ring-cyan-400 focus:border-cyan-500"
+            }`}
+          />
+          {!passwordsMatch && confirmPassword && (
+            <motion.p
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-red-400 text-xs mt-2 ml-1"
+            >
+              Passwords do not match
+            </motion.p>
+          )}
         </div>
 
         {/* Terms and Conditions Checkbox */}
@@ -203,21 +253,24 @@ export default function RegisterPage() {
               className="w-4 h-4 text-cyan-500 bg-gray-700 border-gray-600 rounded focus:ring-cyan-400 focus:ring-2 accent-cyan-500"
             />
           </div>
+          <span className="text-cyan-400 group hover:text-cyan-200"> 
           <label htmlFor="terms" className="text-sm text-gray-300 leading-5">
              I agree to the {" "} 
             <button
                 onClick={() => openModal("terms")}
-                className="text-xs text-blue-100 hover:text-white sm:text-sm"
+                className="text-xs text-cyan-400 group-hover:text-cyan-200 sm:text-sm"
               >
                 Terms
               </button>
-               {" & "}
+               <span className="text-cyan-400 group-hover:text-cyan-200"> & </span>
               <button
                 onClick={() => openModal("privacy")}
-                className="text-xs text-blue-100 hover:text-white sm:text-sm"
+                className="text-xs text-cyan-400 group-hover:text-cyan-200 sm:text-sm"
               >
                 Privacy
               </button>
+
+            
   
             {/* <Link
               href="/terms"
@@ -232,6 +285,7 @@ export default function RegisterPage() {
               
             </Link> */}
           </label>
+          </span>  
           <LegalModal
             isOpen={isOpen}
             onClose={closeModal}
@@ -239,7 +293,7 @@ export default function RegisterPage() {
           >
             {modalType === "terms" && (
               <p className="text-sm text-gray-700 whitespace-pre-line">
-Welcome to 021 AI Co-Founder, your AI-powered partner in turning ideas into ventures. By accessing or using our website, app, or services (collectively “Platform”), you agree to these Terms.
+Welcome to 021 AI Co-Founder, your AI-powered partner in turning ideas into ventures. By accessing or using our website, app, or services (collectively &quot;Platform&quot;), you agree to these Terms.
 <ul className="list-[square] pl-6">
   <li>Eligibility: <br></br>
 You must be at least 18 years old to use the Platform.
@@ -309,7 +363,7 @@ To exercise these rights, contact us at: connectevoa@gmail.com</li>
 We use cookies and similar technologies to enhance performance, analytics, and personalization. You can disable cookies in your browser settings.</li>  
   <li> Data Retention
 We retain your information as long as your account is active or as required by law.</li>  
-  <li> Children’s Privacy
+  <li> Children&apos;s Privacy
 Our services are not directed at individuals under 18. We do not knowingly collect data from children.</li>  
   <li>Policy Updates
 We may update this Privacy Policy from time to time. Any changes will be posted here, with the effective date updated.
@@ -326,9 +380,9 @@ If you have questions about this Privacy Policy, email us at: connectevoa@gmail.
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           type="submit"
-          disabled={isLoading || !agreedToTerms}
+          disabled={isLoading || !agreedToTerms || !passwordsMatch}
           className={`w-full font-medium py-3 rounded-lg transition-all duration-300 shadow-lg ${
-            agreedToTerms && !isLoading
+            agreedToTerms && !isLoading && passwordsMatch
               ? "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white hover:shadow-cyan-500/25"
               : "bg-gray-600 text-gray-400 cursor-not-allowed"
           }`}

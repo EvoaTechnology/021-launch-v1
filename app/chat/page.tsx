@@ -1309,7 +1309,7 @@ export default function ChatPage() {
           </div>
 
           {/* C-Suite Advisor Toggle Button */}
-          <div className="absolute top-4 right-4 flex gap-2">
+          {/* <div className="absolute top-4 right-4 flex gap-2">
             {!sidebarOpenRight && (
               <button
                 onClick={handleOpenSidebarright}
@@ -1331,7 +1331,7 @@ export default function ChatPage() {
                 </svg>
               </button>
             )}
-          </div> 
+          </div>  */}
         </div>
 
         {/* Input Area */}
