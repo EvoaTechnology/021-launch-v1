@@ -149,43 +149,43 @@ export class APIProviderFactory {
       droppedCount: messages.length - safeMessages.length,
     });
 
-    // 1) OpenAI (primary)
-    if (apiKeys.openai) {
-      try {
-        logger.info("🔄 [OPENAI] ATTEMPTING PRIMARY PROVIDER...");
-        logProviderContext(safeMessages, "openai");
+    // // 1) OpenAI (primary)
+    // if (apiKeys.openai) {
+    //   try {
+    //     logger.info("🔄 [OPENAI] ATTEMPTING PRIMARY PROVIDER...");
+    //     logProviderContext(safeMessages, "openai");
 
-        const startTime = Date.now();
-        const response = await callOpenAIAPI(
-          safeMessages,
-          apiKeys.openai,
-          isBusinessRelated,
-          activeRole
-        );
-        const duration = Date.now() - startTime;
+    //     const startTime = Date.now();
+    //     const response = await callOpenAIAPI(
+    //       safeMessages,
+    //       apiKeys.openai,
+    //       isBusinessRelated,
+    //       activeRole
+    //     );
+    //     const duration = Date.now() - startTime;
 
-        const { cleaned } = response;
+    //     const { cleaned } = response;
 
-        logger.info("✅ [OPENAI] SUCCESS:", {
-          provider: "openai",
-          responseTime: `${duration}ms`,
-          responseLength: cleaned.length,
-          confidence: 95,
-        });
+    //     logger.info("✅ [OPENAI] SUCCESS:", {
+    //       provider: "openai",
+    //       responseTime: `${duration}ms`,
+    //       responseLength: cleaned.length,
+    //       confidence: 95,
+    //     });
 
-        return {
-          content: cleaned,
-          provider: "openai",
-          confidence: 95,
-        };
-      } catch (error) {
-        logger.warn("❌ [OPENAI] FAILED:", {
-          provider: "openai",
-          error: error instanceof Error ? error.message : String(error),
-          fallbackTo: "gemini",
-        });
-      }
-    }
+    //     return {
+    //       content: cleaned,
+    //       provider: "openai",
+    //       confidence: 95,
+    //     };
+    //   } catch (error) {
+    //     logger.warn("❌ [OPENAI] FAILED:", {
+    //       provider: "openai",
+    //       error: error instanceof Error ? error.message : String(error),
+    //       fallbackTo: "gemini",
+    //     });
+    //   }
+    // }
 
     // 2) Gemini (secondary)
     if (apiKeys.gemini) {

@@ -310,10 +310,10 @@ export async function callGeminiForReport(
 
   const data = await response.json();
   console.log("data", data);
-  const parts = data?.candidates?.[0]?.content?.parts || [];
+  const parts: Array<{ text?: string; inline_data?: { data?: string } }> = data?.candidates?.[0]?.content?.parts || [];
   console.log("parts", parts);
   const textFromParts = parts
-    .map((p: any) => (typeof p?.text === "string" ? p.text : ""))
+    .map((p) => (typeof p?.text === "string" ? p.text : ""))
     .filter((t: string) => t && t.trim().length > 0)
     .join("\n")
     .trim();
@@ -321,9 +321,7 @@ export async function callGeminiForReport(
   if (textFromParts) return textFromParts;
 
   const inlineFromParts = parts
-    .map((p: any) =>
-      typeof p?.inline_data?.data === "string" ? p.inline_data.data : ""
-    )
+    .map((p) => (typeof p?.inline_data?.data === "string" ? p.inline_data.data : ""))
     .filter((t: string) => t && t.trim().length > 0)
     .join("\n")
     .trim();

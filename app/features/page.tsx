@@ -432,7 +432,7 @@ export default function FeaturesPage() {
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">• Execution Layer</h4>
-                <p className="text-purple-200 text-sm ml-4">AI doesn't just guide, it does — builds, markets, models, and pitches alongside you.</p>
+                <p className="text-purple-200 text-sm ml-4">AI doesn&apos;t just guide, it does — builds, markets, models, and pitches alongside you.</p>
               </div>
             </div>
           </motion.div>

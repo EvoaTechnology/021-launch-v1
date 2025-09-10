@@ -1,9 +1,29 @@
 // middleware.ts
 import { updateSession } from "./utils/supabase/middleware";
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  return updateSession(request);
+  // Enforce canonical host in production
+  const host = request.headers.get("host") || "";
+  const canonical = process.env.NEXT_PUBLIC_SITE_URL || "021.evoa.co.in";
+  const canonicalHost = canonical.replace(/^https?:\/\//, "");
+  const isLocalhost = /localhost|127.0.0.1/.test(host);
+  if (process.env.NODE_ENV === "production" && !isLocalhost && host !== canonicalHost) {
+    const url = new URL(request.url);
+    url.host = canonicalHost;
+    url.protocol = "https:";
+    return NextResponse.redirect(url, 308);
+  }
+
+  const response = await updateSession(request);
+  // Add basic security headers
+  const res = NextResponse.next({ request: { headers: request.headers } });
+  res.headers.set("X-Frame-Options", "SAMEORIGIN");
+  res.headers.set("X-Content-Type-Options", "nosniff");
+  res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  // Return session response if it modified cookies, else our header-enhanced response
+  return response || res;
 }
 
 export const config = {

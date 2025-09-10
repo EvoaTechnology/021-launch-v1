@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
  * Legacy screen: retained to avoid broken links.
  * We instruct user to use Magic Link instead of OTP.
  */
-export default function VerifyOtpPage() {
+function VerifyOtpPageInner() {
   const search = useSearchParams();
   const email = search.get("email") || "";
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
@@ -133,5 +133,13 @@ export default function VerifyOtpPage() {
         </motion.div>
       </main>
     </div>
+  );
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense>
+      <VerifyOtpPageInner />
+    </Suspense>
   );
 }

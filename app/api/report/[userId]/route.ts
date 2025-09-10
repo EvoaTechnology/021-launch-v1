@@ -64,7 +64,7 @@ export async function GET(
 
     const messages: Array<{ role: "user" | "assistant"; content: string }> = (
       chatData.messages || []
-    ).map((m: any) => ({
+    ).map((m: { role: "user" | "ai"; content: unknown }) => ({
       role: (m.role === "ai" ? "assistant" : "user") as "user" | "assistant",
       content:
         typeof m.content === "string" ? m.content : String(m.content ?? ""),

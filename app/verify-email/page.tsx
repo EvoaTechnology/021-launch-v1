@@ -140,7 +140,7 @@ export default function VerifyEmailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
             className="mt-4 text-gray-300 text-lg">
-            We've sent a verification link to your email. Please check your inbox
+            We&apos;ve sent a verification link to your email. Please check your inbox
             to continue.
           </motion.p>
           <motion.div 
@@ -148,7 +148,7 @@ export default function VerifyEmailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
             className="mt-6 text-sm text-gray-400 space-y-2">
-            <p>If you don't see the email, check your spam folder.</p>
+            <p>If you don&apos;t see the email, check your spam folder.</p>
             <p>Click the link in the email to verify your account.</p>
           </motion.div>
         </motion.div>

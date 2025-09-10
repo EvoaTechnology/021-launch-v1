@@ -228,8 +228,8 @@ export const POST = withApiHandler(async (request: NextRequest) => {
     const canonicalMessages = await DatabaseService.getChatMessagesBySessionId(
       sessionId
     );
-    const chrono = (canonicalMessages || []).map((m) => ({
-      _id: (m as any)._id?.toString?.() ?? undefined,
+    const chrono = (canonicalMessages || []).map((m: { _id?: unknown; role: "user" | "ai"; content: unknown }) => ({
+      _id: (m as { _id?: { toString?: () => string } })._id?.toString?.() ?? undefined,
       role: (m.role === "ai" ? "ai" : "user") as "user" | "ai",
       content: String(m.content ?? ""),
     }));

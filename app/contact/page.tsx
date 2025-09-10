@@ -98,7 +98,7 @@ export default function ContactPage() {
 			<div className="text-center mb-12">
 				<h1 className="text-4xl font-bold text-white mb-4">Contact Us</h1>
 				<p className="text-lg text-blue-100">
-					We're here to help you succeed. Reach out to our team anytime.
+					We&apos;re here to help you succeed. Reach out to our team anytime.
 				</p>
 			</div>
 
@@ -153,7 +153,7 @@ export default function ContactPage() {
 							<CardHeader>
 								<CardTitle className="text-white text-2xl">Feedback Form</CardTitle>
 								<CardDescription className="text-blue-100">
-									Fill out the form below and we'll get back to you as soon as
+									Fill out the form below and we&apos;ll get back to you as soon as
 									possible.
 								</CardDescription>
 							</CardHeader>

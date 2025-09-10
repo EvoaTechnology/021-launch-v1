@@ -160,7 +160,7 @@ export default function Pricing() {
               Choose Your Plan
             </h1>
             <p className="mt-2 text-base text-blue-200 sm:mt-4 sm:text-lg">
-              Select the perfect plan for your startup's needs and get started
+              Select the perfect plan for your startup&apos;s needs and get started
               with <b>Evoa O21</b>
             </p>
           </motion.div>

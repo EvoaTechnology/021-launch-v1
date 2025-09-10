@@ -22,12 +22,12 @@ import Chat from "../model/Chat";
 
 export async function initializeDatabase() {
   try {
-    if (process.env.NODE_ENV === "development")
+    if (process.env.NODE_ENV !== "production")
       console.log("🔄 Initializing database...");
 
     // Connect to database
     await connectToDatabase();
-    if (process.env.NODE_ENV === "development")
+    if (process.env.NODE_ENV !== "production")
       console.log("✅ Connected to MongoDB");
 
     // Create indexes for better performance
@@ -36,15 +36,15 @@ export async function initializeDatabase() {
     await ChatSession.createIndexes();
     await Chat.createIndexes();
 
-    if (process.env.NODE_ENV === "development")
+    if (process.env.NODE_ENV !== "production")
       console.log("✅ Database indexes created");
 
     // Note: Users are managed by Supabase authentication
     // No need to create test users here
-    if (process.env.NODE_ENV === "development")
+    if (process.env.NODE_ENV !== "production")
       console.log("ℹ️  Users are managed by Supabase authentication");
 
-    if (process.env.NODE_ENV === "development")
+    if (process.env.NODE_ENV !== "production")
       console.log("🎉 Database initialization complete!");
   } catch (error) {
     console.error("❌ Database initialization failed:", error);

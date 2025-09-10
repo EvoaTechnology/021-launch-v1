@@ -5,9 +5,15 @@ const nextConfig: NextConfig = {
   images:{
     domains:['i.pinimg.com'],
   },
+  experimental: {
+    // Ensure URL/redirect handling and edge features are stable in prod
+    optimizePackageImports: [
+      "lucide-react",
+    ],
+  },
   eslint: {
-    // ✅ Skip ESLint errors during Vercel builds
-    ignoreDuringBuilds: true,
+    // Fail builds on ESLint errors in production to keep quality high
+    ignoreDuringBuilds: process.env.NODE_ENV !== "production",
   },
 
 };

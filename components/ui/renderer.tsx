@@ -87,7 +87,7 @@ const AIRenderer: React.FC<AIRendererProps> = ({ content, className = '', theme 
   };
 
   // Smart content detection and preprocessing
-  const smartContentDetection = useCallback((rawContent: string): { isProcessed: boolean; content: string; detectedBlocks: any[] } => {
+  const smartContentDetection = useCallback((rawContent: string): { isProcessed: boolean; content: string; detectedBlocks: Array<{ type: string; language?: string; title?: string; content: string }>} => {
     // Pattern 1: Check for file headers like "📄 index.html" or "Html" followed by code
     const fileHeaderPattern = /(?:📄\s*)?(?:(\w+\.(?:html|css|js|tsx?|py|java))|([Hh]tml|[Cc]ss|[Jj]ava[Ss]cript|[Pp]ython))\s*$/gm;
     
@@ -103,7 +103,7 @@ const AIRenderer: React.FC<AIRendererProps> = ({ content, className = '', theme 
     }
     
     const lines = rawContent.split('\n');
-    const detectedBlocks: any[] = [];
+    const detectedBlocks: Array<{ type: string; language?: string; title?: string; content: string }> = [];
     let processedContent = '';
     const currentBlock: { type: string; language: string; content: string; title?: string } | null = null;
     let i = 0;
@@ -382,7 +382,7 @@ const AIRenderer: React.FC<AIRendererProps> = ({ content, className = '', theme 
     if (!text) return text;
     
     // Escape HTML first to prevent interpretation
-    let escaped = escapeHtml(text);
+    const escaped = escapeHtml(text);
     
     return escaped
       // Bold

@@ -221,7 +221,15 @@ export class DatabaseService {
     sessionId: string,
     indexStart: number,
     indexEnd: number
-  ): Promise<{ hasOverlap: boolean; overlappingSummaries: any[] }> {
+  ): Promise<{
+    hasOverlap: boolean;
+    overlappingSummaries: Array<{
+      _id?: unknown;
+      indexStart: number;
+      indexEnd: number;
+      content: string;
+    }>;
+  }> {
     await connectToDatabase();
 
     const existingSummaries = await ChatSummary.find({

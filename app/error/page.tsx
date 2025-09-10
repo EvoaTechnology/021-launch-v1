@@ -130,16 +130,16 @@ function ErrorContent() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <a
+          <Link
             href="/"
             className="text-gray-300 hover:text-white transition-colors">
             Home
-          </a>
-          <a
+          </Link>
+          <Link
             href="/login"
             className="text-gray-300 hover:text-white transition-colors">
             Sign In
-          </a>
+          </Link>
         </div>
       </motion.header>
 
@@ -252,16 +252,16 @@ export default function ErrorPage() {
             </div>
 
             <div className="flex items-center space-x-4">
-              <a
+              <Link
                 href="/"
                 className="text-gray-300 hover:text-white transition-colors">
                 Home
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/login"
                 className="text-gray-300 hover:text-white transition-colors">
                 Sign In
-              </a>
+              </Link>
             </div>
           </header>
 

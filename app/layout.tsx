@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "021 AI - Your AI-Powered Business Advisor",
   description: "Get expert business advice from AI-powered investor personas",
   generator: "EVO-A",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://021.evoa.co.in"),
 };
 
 export default function RootLayout({

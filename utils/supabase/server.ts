@@ -12,11 +12,13 @@ export async function createClient() {
     throw new Error("Supabase environment variables are not configured");
   }
 
-  console.log("🔧 Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-  console.log(
-    "🔧 Supabase Key length:",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length
-  );
+  if (process.env.NODE_ENV !== "production") {
+    console.log("🔧 Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log(
+      "🔧 Supabase Key length:",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length
+    );
+  }
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
