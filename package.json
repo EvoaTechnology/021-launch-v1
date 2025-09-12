@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-  "node": ">=22 <=24"
+    "node": ">=22 <=24"
   },
-
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --no-lint",
@@ -15,7 +14,6 @@
     "db:test": "tsx lib/test-db-connection.ts",
     "db:reset": "tsx lib/init-db.ts --reset"
   },
-
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",
     "@radix-ui/react-label": "^2.1.7",
@@ -29,6 +27,7 @@
     "@supabase/supabase-js": "^2.53.0",
     "@tailwindcss/typography": "^0.5.16",
     "@uiw/react-md-editor": "^4.0.8",
+    "@vercel/speed-insights": "^1.2.0",
     "chart.js": "^4.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
