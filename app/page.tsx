@@ -210,7 +210,7 @@ const LandingPage: React.FC = () => {
         </nav>
 
         {/* Mobile menu button */}
-        <button className="md:hidden text-gray-300 hover:text-white">
+        {/* <button className="md:hidden text-gray-300 hover:text-white">
           <svg
             className="w-6 h-6"
             fill="none"
@@ -223,7 +223,7 @@ const LandingPage: React.FC = () => {
               d="M4 6h16M4 12h16M4 18h16"
             />
           </svg>
-        </button>
+        </button> */}
 
         {/* Desktop auth buttons */}
         {isAuthenticated ? (
