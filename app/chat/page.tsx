@@ -93,6 +93,7 @@ export default function ChatPage() {
   const [isTyping, setIsTyping] = useState(false);
   const [sidebarOpenLeft, setSidebarOpenLeft] = useState(true);
   const [sidebarOpenRight, setSidebarOpenRight] = useState(true);
+  const [isMobileView, setIsMobileView] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [proUser] = useState(false);
   const [activeRole, setActiveRole] = useState("Idea Validator");
@@ -220,6 +221,33 @@ export default function ChatPage() {
   useEffect(() => {
     setLocalMessages(messages);
   }, [messages]);
+
+  // Handle mobile view
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobileView(mobile);
+  
+      if (mobile) {
+        // Mobile: both sidebars closed
+        setSidebarOpenLeft(false);
+        setSidebarOpenRight(false);
+      } else {
+        // Desktop: both sidebars open
+        setSidebarOpenLeft(true);
+        setSidebarOpenRight(true);
+      }
+    };
+  
+    // Run once on mount
+    handleResize();
+  
+    // Listen for resize events
+    window.addEventListener("resize", handleResize);
+  
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Use localMessages for rendering instead of messages from store
   const displayMessages = localMessages;
