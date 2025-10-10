@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/authStore";
 import { login } from "./action";
+import { createClient } from "@/utils/supabase/client" ;
 import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
+  const supabase = createClient();
   const { user, isAuthenticated, checkAuth } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,10 +22,23 @@ export default function LoginPage() {
   }, [checkAuth]);
 
   useEffect(() => {
-    if (isAuthenticated && user) {
-      router.replace("/"); // redirect to home instead of /chat
+  if (isAuthenticated && user) {
+    router.replace("/"); // redirect to home instead of /chat
+  }
+}, [isAuthenticated, user, router]);
+
+ const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/chat`,
+      },
+    });
+    if (error) {
+      console.error("❌ Google login error:", error.message);
+      setError(error.message);
     }
-  }, [isAuthenticated, user, router]);
+  };
 
   // Show loading while checking authentication
   if (isLoading) {
@@ -186,6 +201,20 @@ export default function LoginPage() {
               {isLoading ? "Signing in..." : "Log In"}
             </motion.button>
           </form>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+            className={`w-full font-medium py-3 rounded-lg transition-all duration-300 shadow-lg ${
+                !isLoading
+                  ? "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white hover:shadow-cyan-500/25"
+                  : "bg-gray-600 text-gray-400 cursor-not-allowed"
+              }`}
+          >
+            Continue with Google
+          </motion.button>
 
           <p className="text-center text-gray-300">
             New here?{" "}

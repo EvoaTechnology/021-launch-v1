@@ -7,9 +7,11 @@ import { signup } from "./action";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import LegalModal from "@/components/ui/LegalModal";
+import { createClient } from "@/utils/supabase/client";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const supabase = createClient();
   const { user, isAuthenticated, checkAuth } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +50,19 @@ export default function RegisterPage() {
   useEffect(() => {
     if (isAuthenticated && user) router.replace("/chat");
   }, [isAuthenticated, user, router]);
+ 
+    const handleGoogleLogin = async () => {
+const { error } = await supabase.auth.signInWithOAuth({
+provider: "google",
+options: {
+redirectTo: `${window.location.origin}/chat`,
+},
+});
+if (error) {
+console.error("❌ Google login error:", error.message);
+setError(error.message);
+}
+};
 
   // Show loading while checking authentication
   if (isLoading) {
@@ -390,7 +405,19 @@ If you have questions about this Privacy Policy, email us at: connectevoa@gmail.
           {isLoading ? "Creating account..." : "Sign Up"}
         </motion.button>
       </form>
-
+       <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleGoogleLogin}
+            disabled={isLoading || !agreedToTerms}
+            className={`w-full font-medium py-3 rounded-lg transition-all duration-300 shadow-lg ${
+            agreedToTerms && !isLoading
+              ? "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white hover:shadow-cyan-500/25"
+              : "bg-gray-600 text-gray-400 cursor-not-allowed"
+          }`}
+          >
+            Continue with Google
+         </motion.button>
       <p className="text-center text-gray-300">
         Already have an account?{" "}
         <a
