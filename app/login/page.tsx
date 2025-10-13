@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/authStore";
 import { login } from "./action";
 import { motion } from "framer-motion";
+import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
+  const supabase = createClient();
   const { user, isAuthenticated, checkAuth } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +27,19 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, user, router]);
 
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/chat`,
+      },
+    });
+    if (error) {
+      console.error("❌ Google login error:", error.message);
+      setError(error.message);
+    }
+  };
+
   // Show loading while checking authentication
   if (isLoading) {
     return (
@@ -36,7 +51,7 @@ export default function LoginPage() {
       </main>
     );
   }
-
+  
   const handleSubmit = async (formData: FormData) => {
     setIsLoading(true);
     setError(null);
@@ -57,7 +72,8 @@ export default function LoginPage() {
         background:
           "linear-gradient(220deg, rgb(15, 15, 16) 20%, rgb(7, 20, 52) 40%, rgb(22, 21, 21) 100%",
       }}
-      className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
+      className="min-h-screen bg-gray-900 text-white relative overflow-hidden"
+    >
       {/* Radiant Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Geometric shapes */}
@@ -102,7 +118,8 @@ export default function LoginPage() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6">
+        className="relative z-10 flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6"
+      >
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
             <div className="w-4 h-4 bg-white rounded-full opacity-80"></div>
@@ -113,7 +130,8 @@ export default function LoginPage() {
         <div className="flex items-center space-x-4">
           <Link
             href="/"
-            className="text-gray-300 hover:text-white transition-colors">
+            className="text-gray-300 hover:text-white transition-colors"
+          >
             Home
           </Link>
         </div>
@@ -125,7 +143,8 @@ export default function LoginPage() {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-full max-w-md space-y-6 p-8 bg-gray-800/40 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl">
+          className="w-full max-w-md space-y-6 p-8 bg-gray-800/40 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl"
+        >
           <div className="text-center">
             <h1
               className="text-3xl font-bold mb-2"
@@ -136,7 +155,8 @@ export default function LoginPage() {
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
-              }}>
+              }}
+            >
               Welcome back
             </h1>
             <p className="text-gray-300">Log in to access your AI workspace.</p>
@@ -146,7 +166,8 @@ export default function LoginPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-md text-sm">
+              className="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-md text-sm"
+            >
               {error}
             </motion.div>
           )}
@@ -173,7 +194,8 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <Link
                 href="/forgot-password"
-                className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors">
+                className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
+              >
                 Forgot password?
               </Link>
             </div>
@@ -182,16 +204,31 @@ export default function LoginPage() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-cyan-500/25">
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-cyan-500/25"
+            >
               {isLoading ? "Signing in..." : "Log In"}
             </motion.button>
           </form>
 
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+            className={`w-full font-medium py-3 rounded-lg transition-all duration-300 shadow-lg ${
+              !isLoading
+                ? "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white hover:shadow-cyan-500/25"
+                : "bg-gray-600 text-gray-400 cursor-not-allowed"
+            }`}
+          >
+            Continue with Google
+          </motion.button>
           <p className="text-center text-gray-300">
             New here?{" "}
             <a
               href="/register"
-              className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium">
+              className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium"
+            >
               Create an account
             </a>
           </p>
